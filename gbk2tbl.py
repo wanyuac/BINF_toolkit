@@ -4,9 +4,9 @@ This script converts a GenBank file (.gbk or .gb) into a Sequin feature table (.
 
 Package requirement: BioPython and argparse
 
-Usage: python gbk2tbl.py --species "<species name>" --strain <strain name> --mincontigsize 200 --topology <linear/circular> --prefix <prefix> < annotation.gbk 2> stderr.txt
+Usage: python gbk2tbl.py --mincontigsize 200 --prefix <prefix> --modifiers <modifier file> < annotation.gbk 2> stderr.txt
 
-Input: a GenBank file
+Input: a GenBank file, which ought to be passed to the script through stdin.
 
 Outputs
 	<prefix>.tbl: the Sequin feature table
@@ -14,13 +14,11 @@ Outputs
 	These files are inputs for tbl2asn which generates ASN.1 files (.sqn).
 
 Arguments
-	--species: the species name, default = "species"
-	--strain: the strain name, default = "strain"
 	--mincontigsize: the minimum contig size, default = 200 in accordance with NCBI's regulation.
-	--topology: the molecular topology (circular/linear) of the sequence if this information is not contained in records
-		contigs: linear
-		finished genomes of plasmids and bacterial chromosomes: circular
 	--prefix: the prefix of output filenames, default = "seq"
+	--modifiers: Modifiers for every FASTA definition line. All modifiers must be written in a single line and are separated by a single space character.
+	  No space should be placed besides the "=" sign. Check http://www.ncbi.nlm.nih.gov/Sequin/modifiers.html for choosing a proper format for modifiers.
+	
 
 Edition notes
 	This script is derived from the one developed by SEQanswers users nickloman (https://gist.github.com/nickloman/2660685/genbank_to_tbl.py) and ErinL who modified nickloman's script and put it
@@ -31,6 +29,12 @@ Authors ordered by editions: nickloman, ErinL, and Yu Wan (wanyuac@126.com).
 
 Licence: GNU GPL 2.1
 
+Notes for the FASTA header modifiers
+	[topology=?]: the molecular topology (circular/linear) of the sequence if this information is not contained in records
+		contigs: linear (the default value)
+		finished genomes of plasmids and bacterial chromosomes: circular
+	An example of the content of the modifier file:
+		[organism=Serratia marcescens subsp. marcescens] [sub-species=marcescens] [strain=AH0650_Sm1]
 '''
 
 import sys
@@ -40,13 +44,17 @@ from argparse import (ArgumentParser, FileType)
 def parse_args():
 # Extract arguments from the command line
 	parser = ArgumentParser(description= "Read arguments: species, strain, BioProject, prefix")
-	parser.add_argument("--species", type = str, required = False, default = "species", help = "The species name")
-	parser.add_argument("--strain", type = str, required = False, default = "strain", help = "The strain name")
 	parser.add_argument("--mincontigsize", type = int, required = False, default = 200, help = "The minimum contig length")
-	parser.add_argument("--topology", type = str, required = False, default = "linear", help = "The molecular topology (linear/circular)")
 	parser.add_argument("--prefix", type = str, required = False, default = "seq", help = "The prefix of output filenames")
+	parser.add_argument("--modifiers", type = str, required = True, default = "modifiers.txt", help = "The text file containing a single line of FASTA head modifiers")
 	return parser.parse_args()
-	
+
+def read_modifiers(file):
+# This function only reads the first line of the modifier file. So please ensure that all modifiers are put in the first line.
+	with open(file, "rU") as f:
+		s = f.readline()  # only read once
+	return s
+
 allowed_qualifiers = ["locus_tag", "gene", "product", "pseudo", "protein_id", "gene_desc", "old_locus_tag", "note", "inference"]
 # These are selected qualifiers because we do not want to see qualifiers such as "translation", "transl_table", or "codon_start" in the feature table.
 
@@ -55,6 +63,7 @@ def main():
 	contig_num = 0
 	fasta_fh = open(args.prefix + ".fsa", "w")  # the file handle for the fasta file
 	feature_fh = open(args.prefix + ".tbl", "w")  # the file handle for the feature table
+	modifiers = read_modifiers(args.modifiers)  # read the modifiers from a text file
 	records = list(SeqIO.parse(sys.stdin, "genbank"))  # read a GenBank file from the standard input and convert it into a list of SeqRecord objects
 
 	for rec in records:  # for every SeqRecord object in the list "records"
@@ -64,13 +73,7 @@ def main():
 		contig_num += 1
 		print rec.name
 		
-		topo = rec.annotations.get("molecule", args.topology)  # returns either "circular" or "linear" if the key "molecule" is present
-		'''
-		SeqRecord.annotations is a dictionary, hence the dictionary method get(key, default value) applies.
-		However, "molecule" is not a key yet, so this method always returns the default value args.topology.
-		SeqRecord.annotations may include the key "molecule" in future versions.
-		'''
-		rec.description = "[organism = %s] [strain = %s] [molecule = DNA] [topology = %s] [tech=wgs] [gcode=11]" % (args.species, args.strain, topo)
+		rec.description = modifiers
 		SeqIO.write([rec], fasta_fh, "fasta")  # add the sequence of this contig to the fasta file
 
 		print >> feature_fh, ">Feature %s" % (rec.name)  # write the first line of this record in the feature table: the LOCUS name
@@ -93,6 +96,8 @@ def main():
 					continue  # start a new "for" loop of f, skipping the following "for" statement of v
 				for v in values:  # else, write all values under this key (qualifier's name)
 					print >> feature_fh, "\t\t\t%s\t%s" % (key, v)
+	fasta_fh.close()  # finish the generation of the FASTA file
+	feature_fh.close()  # finish the generation of the feature table
 	print str(contig_num) + " records have been converted."
 
 # call main function
