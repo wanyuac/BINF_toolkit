@@ -1,5 +1,5 @@
 '''
-This script extracts a region of nucleotides by positions from a fasta file.
+This script extracts a region of nucleotides by positions from a fasta file
 Author: Yu Wan (wanyuac@126.com)
 Date: 1 June 2015
 GitHub: https://github.com/wanyuac/BINF_toolkit
