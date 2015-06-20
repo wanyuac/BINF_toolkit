@@ -25,7 +25,7 @@ Arguments
 Edition notes
 	This script is derived from the one developed by SEQanswers users nickloman (https://gist.github.com/nickloman/2660685/genbank_to_tbl.py) and ErinL who modified nickloman's script and put it
 	on the forum post (http://seqanswers.com/forums/showthread.php?t=19975).
-	Date of last edition: 18 June 2015 by Yu Wan.
+	Date of last edition: 20 June 2015 by Yu Wan.
 
 Authors ordered by editions: nickloman, ErinL, and Yu Wan (wanyuac@126.com).
 
