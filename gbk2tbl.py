@@ -55,8 +55,11 @@ def read_modifiers(file):
 		s = f.readline()  # only read once
 	return s
 
-allowed_qualifiers = ["locus_tag", "gene", "product", "pseudo", "protein_id", "gene_desc", "old_locus_tag", "note", "inference"]
-# These are selected qualifiers because we do not want to see qualifiers such as "translation", "transl_table", or "codon_start" in the feature table.
+allowed_qualifiers = ["locus_tag", "gene", "product", "pseudo", "protein_id", "gene_desc", "old_locus_tag", "note", "inference", "organism", "mol_type", "strain", "sub_species", "isolation-source", "country"]
+"""
+These are selected qualifiers because we do not want to see qualifiers such as "translation", "transl_table", or "codon_start" in the feature table.
+Qualifiers "organism", "mol_type", "strain", "sub_species", "isolation-source", "country" belong to the feature "source".
+"""
 
 def main():
 	args = parse_args()  # read arguments
@@ -73,12 +76,14 @@ def main():
 		contig_num += 1
 		print rec.name
 		
+		# write the fasta file 
 		rec.description = modifiers
 		SeqIO.write([rec], fasta_fh, "fasta")  # add the sequence of this contig to the fasta file
 
+		# write the feature table
 		print >> feature_fh, ">Feature %s" % (rec.name)  # write the first line of this record in the feature table: the LOCUS name
 		for f in rec.features:
-			# print the coordinate
+			# print the coordinates
 			if f.strand == 1:
 				print >> feature_fh, "%d\t%d\t%s" % (f.location.nofuzzy_start + 1, f.location.nofuzzy_end, f.type)
 			else:
