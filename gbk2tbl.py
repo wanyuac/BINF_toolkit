@@ -1,5 +1,5 @@
 '''
-This script converts a GenBank file (.gbk or .gb) into a Sequin feature table (.tbl), which is an input file of tbl2asn used for creating an ASN.1 file (.sqn).
+This script converts a GenBank file (.gbk or .gb) from Stdin into a Sequin feature table (.tbl), which is an input file of tbl2asn used for creating an ASN.1 file (.sqn).
 
 Package requirement: BioPython and argparse
 
@@ -23,7 +23,7 @@ Edition notes
 	on the forum post (http://seqanswers.com/forums/showthread.php?t=19975).
 	Date of last edition: 20 June 2015 by Yu Wan (wanyuac@gmail.com).
 
-Authors ordered by editions: nickloman, ErinL, and Yu Wan.
+Author of this version: Yu Wan
 
 Licence: GNU GPL 2.1
 
