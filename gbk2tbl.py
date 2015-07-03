@@ -37,7 +37,7 @@ Notes for the FASTA header modifiers
 
 import sys
 from Bio import SeqIO
-from argparse import (ArgumentParser, FileType)
+from argparse import ArgumentParser
 
 def parse_args():
 # Extract arguments from the command line
