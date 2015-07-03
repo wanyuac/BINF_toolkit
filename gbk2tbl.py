@@ -10,7 +10,7 @@ Inputs:
 	A modifier file: a plain text file containing modifiers for every FASTA definition line.
 		All modifiers must be written in a single line and are separated by a single space character.
 		No space should be placed besides the '=' sign. Check http://www.ncbi.nlm.nih.gov/Sequin/modifiers.html for choosing a proper format for modifiers.
-		Example: [organism=Serratia marcescens subsp. marcescens] [sub-species=marcescens] [strain=AH0650_Sm1] [topology=linear] [moltype=DNA] [tech=wgs] [gcode=11] [country=Australia] [isolation-source=sputum]
+		For example: [organism=Serratia marcescens subsp. marcescens] [sub-species=marcescens] [strain=AH0650_Sm1] [topology=linear] [moltype=DNA] [tech=wgs] [gcode=11] [country=Australia] [isolation-source=sputum]
 		This line will be copied and printed along with the record name as the definition line of every contig sequence.
 
 Outputs
