@@ -5,7 +5,13 @@ Package requirement: BioPython and argparse
 
 Usage: python gbk2tbl.py --mincontigsize 200 --prefix <prefix> --modifiers <modifier file> < annotation.gbk 2> stderr.txt
 
-Input: a GenBank file, which ought to be passed to the script through stdin.
+Inputs:
+	A GenBank file, which ought to be passed to the script through stdin.
+	A modifier file: a plain text file containing modifiers for every FASTA definition line.
+		All modifiers must be written in a single line and are separated by a single space character.
+		No space should be placed besides the '=' sign. Check http://www.ncbi.nlm.nih.gov/Sequin/modifiers.html for choosing a proper format for modifiers.
+		Example: [organism=Serratia marcescens subsp. marcescens] [sub-species=marcescens] [strain=AH0650_Sm1] [topology=linear] [moltype=DNA] [tech=wgs] [gcode=11] [country=Australia] [isolation-source=sputum]
+		This line will be copied and printed along with the record name as the definition line of every contig sequence.
 
 Outputs
 	<prefix>.tbl: the Sequin feature table
@@ -13,15 +19,14 @@ Outputs
 	These files are inputs for tbl2asn which generates ASN.1 files (.sqn).
 
 Arguments
-	--mincontigsize: the minimum contig size, default = 200 in accordance with NCBI's regulation.
+	--mincontigsize: the minimum contig size, default = 200 in accordance with NCBI's regulation
 	--prefix: the prefix of output filenames, default = 'seq'
-	--modifiers: Modifiers for every FASTA definition line. All modifiers must be written in a single line and are separated by a single space character.
-	  No space should be placed besides the '=' sign. Check http://www.ncbi.nlm.nih.gov/Sequin/modifiers.html for choosing a proper format for modifiers.
-
+	--modifiers: the filename of the modifier file, default = 'modifiers.txt'
+	  
 Edition notes
 	This script is derived from the one developed by SEQanswers users nickloman (https://gist.github.com/nickloman/2660685/genbank_to_tbl.py) and ErinL who modified nickloman's script and put it
 	on the forum post (http://seqanswers.com/forums/showthread.php?t=19975).
-	Date of last edition: 20 June 2015 by Yu Wan (wanyuac@gmail.com).
+	Edition history: 20 June 2015 - 3 July 2015 by Yu Wan (wanyuac@gmail.com)
 
 Author of this version: Yu Wan
 
@@ -37,7 +42,7 @@ Notes for the FASTA header modifiers
 
 import sys
 from Bio import SeqIO
-from argparse import (ArgumentParser, FileType)
+from argparse import ArgumentParser
 
 def parse_args():
 # Extract arguments from the command line
@@ -72,11 +77,11 @@ def main():
 			print >> sys.stderr, 'skipping small contig %s' % (rec.id)
 			continue  # start a new 'for' loop
 		contig_num += 1
-		print rec.name
+		print rec.name  # print the contig name to STDOUT
 		
 		# write the fasta file 
 		rec.description = modifiers
-		SeqIO.write([rec], fasta_fh, 'fasta')  # add the sequence of this contig to the fasta file
+		SeqIO.write([rec], fasta_fh, 'fasta')  # Prints this contig's sequence to the fasta file. The sequence header will be rec.description.
 
 		# write the feature table
 		print >> feature_fh, '>Feature %s' % (rec.name)  # write the first line of this record in the feature table: the LOCUS name
