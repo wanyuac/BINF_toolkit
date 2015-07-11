@@ -16,23 +16,23 @@ Inputs:
 Outputs
 	<prefix>.tbl: the Sequin feature table
 	<prefix>.fsa: the corresponding fasta file
-	These files are inputs for tbl2asn which generates ASN.1 files (.sqn).
+	These files are inputs for tbl2asn which generates ASN.1 files (*.sqn).
 
 Arguments
 	--mincontigsize: the minimum contig size, default = 200 in accordance with NCBI's regulation
 	--prefix: the prefix of output filenames, default = 'seq'
 	--modifiers: the filename of the modifier file, default = 'modifiers.txt'
 	  
-Edition notes
+Development notes
 	This script is derived from the one developed by SEQanswers users nickloman (https://gist.github.com/nickloman/2660685/genbank_to_tbl.py) and ErinL who modified nickloman's script and put it
 	on the forum post (http://seqanswers.com/forums/showthread.php?t=19975).
-	Edition history: 20 June 2015 - 3 July 2015 by Yu Wan (wanyuac@gmail.com)
 
-Author of this version: Yu Wan
+Author of this version: Yu Wan (wanyuac@gmail.com, https://github.com/wanyuac)
+Edition history: 20 June 2015 - 11 July 2015
 
 Licence: GNU GPL 2.1
 
-Notes for the FASTA header modifiers
+Notes about the FASTA header modifiers
 	[topology=?]: the molecular topology (circular/linear) of the sequence if this information is not contained in records
 		contigs: linear (the default value)
 		finished genomes of plasmids and bacterial chromosomes: circular
