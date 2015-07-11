@@ -18,12 +18,12 @@ Arguments
 	--modifiers: Modifiers for every FASTA definition line. All modifiers must be written in a single line and are separated by a single space character.
 	  No space should be placed besides the '=' sign. Check http://www.ncbi.nlm.nih.gov/Sequin/modifiers.html for choosing a proper format for modifiers.
 
-Edition notes
+Development notes
 	This script is derived from the one developed by SEQanswers users nickloman (https://gist.github.com/nickloman/2660685/genbank_to_tbl.py) and ErinL who modified nickloman's script and put it
-	on the forum post (http://seqanswers.com/forums/showthread.php?t=19975).
-	Date of last edition: 20 June 2015 by Yu Wan (wanyuac@gmail.com).
+	on the forum post at http://seqanswers.com/forums/showthread.php?t=19975.
 
-Author of this version: Yu Wan
+Author of this version: Yu Wan (wanyuac@gmail.com, https://github.com/wanyuac)
+Edition history: 20 June and 11 July 2015
 
 Licence: GNU GPL 2.1
 
@@ -37,7 +37,7 @@ Notes for the FASTA header modifiers
 
 import sys
 from Bio import SeqIO
-from argparse import (ArgumentParser, FileType)
+from argparse import ArgumentParser
 
 def parse_args():
 # Extract arguments from the command line
