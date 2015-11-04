@@ -1,7 +1,8 @@
 """
 This script takes a list of NCBI accession numbers (on for each line) from the STDIN and downloads corresponding entries (either GenBank files or FASTA files) under the target directory.
 
-Usage: python download_NCBI_records.py --items ./objects.txt --format fasta --email xxx@xxx.com --suffix fna --outdir ./ref --skip > download.log
+Usage: python download_NCBI_records.py --records ./objects.txt --format fasta --email xxx@xxx.com --suffix fna --outdir ./ref --skip > download.log
+	   python download_NCBI_records.py --records "NC_0001,NC_0002" --format genbank --email xxx@xxx.com --suffix gbk --outdir ./ref --skip > download.log
 	   Type python download_NCBI_records.py -h or --help for help information.
 
 Notes about options and option arguments:
