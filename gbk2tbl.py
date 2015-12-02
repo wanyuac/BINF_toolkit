@@ -3,10 +3,12 @@ This script converts a GenBank file (.gbk or .gb) from Stdin into a Sequin featu
 
 Package requirement: BioPython and argparse
 
-Usage: python gbk2tbl.py --mincontigsize 200 --prefix <prefix> --modifiers <modifier file> < annotation.gbk 2> stderr.txt
+Usage:
+	python gbk2tbl.py --mincontigsize 200 --prefix any_prefix --modifiers modifier_file.txt < annotation.gbk 2> stderr.txt
+	Note that this script reads the GenBank file through the stdin ("< annotation.gbk") and you may want to redirect the stderr to a file via "> stderr.txt" (redirection).
 
 Inputs:
-	A GenBank file, which ought to be passed to the script through stdin.
+	A GenBank file, which ought to be passed to the script through the standard input (stdin).
 	A modifier file: a plain text file containing modifiers for every FASTA definition line.
 		All modifiers must be written in a single line and are separated by a single space character.
 		No space should be placed besides the '=' sign. Check http://www.ncbi.nlm.nih.gov/Sequin/modifiers.html for choosing a proper format for modifiers.
@@ -14,8 +16,8 @@ Inputs:
 		This line will be copied and printed along with the record name as the definition line of every contig sequence.
 
 Outputs
-	<prefix>.tbl: the Sequin feature table
-	<prefix>.fsa: the corresponding fasta file
+	any_prefix.tbl: the Sequin feature table
+	any_prefix.fsa: the corresponding fasta file
 	These files are inputs for tbl2asn which generates ASN.1 files (*.sqn).
 
 Arguments
@@ -32,7 +34,7 @@ Edition history: 20 June 2015 - 11 July 2015
 
 Licence: GNU GPL 2.1
 
-Notes about the FASTA header modifiers
+Some notes about the FASTA header modifiers:
 	[topology=?]: the molecular topology (circular/linear) of the sequence if this information is not contained in records
 		contigs: linear (the default value)
 		finished genomes of plasmids and bacterial chromosomes: circular
