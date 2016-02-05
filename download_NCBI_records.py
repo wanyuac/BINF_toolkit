@@ -1,7 +1,7 @@
 """
-This script takes a list of NCBI accession numbers (on for each line) from the STDIN and downloads corresponding entries (either GenBank files or FASTA files) under the target directory.
+This script takes a list of NCBI accession numbers (one for each line) from the STDIN and downloads corresponding entries (either GenBank files or FASTA files) under the target directory.
 
-Usage: python download_NCBI_records.py --records ./objects.txt --format fasta --email xxx@xxx.com --suffix fna --outdir ./ref --skip > download.log
+Usage: python download_NCBI_records.py --records "file:objects.txt" --format fasta --email xxx@xxx.com --suffix fna --outdir ./ref --skip > download.log
 	   python download_NCBI_records.py --records "NC_0001,NC_0002" --format genbank --email xxx@xxx.com --suffix gbk --outdir ./ref --skip > download.log
 	   Type python download_NCBI_records.py -h or --help for help information.
 
@@ -20,7 +20,7 @@ References:
 	
 Author: Yu Wan (wanyuac@gmail.com, https://github.com/wanyuac)
 Development history
-	27 June 2015 - 14 July 2015, 4 November 2015
+	27 June 2015 - 14 July 2015, 4 November 2015, 6/2/2016
 	Previous name: download_gbk.py
 Python version: 2.7.5
 Licence: GNU GPL 2.1
@@ -44,8 +44,8 @@ def fetch_records(extension, targets, format, outdir, skip):
 	n = 0  # the counter for downloaded files
 	
 	# deal with two models of input
-	if ".txt" in targets:  # treat "targets" as a file name
-		with open(targets, "rU") as f:
+	if targets.startswith("file:"):  # treat "targets" as a file name
+		with open(targets[5 : ], "rU") as f:
 			accessions = f.read().splitlines()  # read each line into a component of a list and drop newline characters
 	else:  # treat "targets" as a series of accession numbers separated by commas.
 		accessions = targets.split(",")
