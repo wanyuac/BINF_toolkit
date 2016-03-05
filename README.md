@@ -81,7 +81,7 @@ A modifier file: a plain text file containing modifiers for every FASTA definiti
 **Outputs**  
 * any_prefix.tbl: the Sequin feature table
 * any_prefix.fsa: the corresponding fasta file
-* These files are inputs for tbl2asn which generates ASN.1 files (*.sqn).
+These files are inputs for tbl2asn which generates ASN.1 files (*.sqn).  
 
 **Arguments**  
 * --mincontigsize: the minimum contig size, default = 200 in accordance with NCBI's regulation  
@@ -90,8 +90,10 @@ A modifier file: a plain text file containing modifiers for every FASTA definiti
 	
 ### <a name="gc"></a>gc.py
 
-This program calculates the length, GC content, and entropy for each record in a multi-fasta file.
+This program calculates the length, GC content, and entropy for each record in a multi-fasta file.  
+
 Input: a fasta file which contains multiple sequences from the standard input  
+
 Output: for each sequence, the script prints: the header line, total sequence length, (G+C)% and entropy of the input sequence.  
 
 Command line: python gc.py \< filename.fasta  
@@ -112,16 +114,15 @@ Required module: Bio, argparse, csv
 **Inputs**  
 1. A GenBank file.  
 2. A text file listing selected locus_tags in the following format: locus_tag"\t"feature_type. This file MUST use ASCII codes because [the module csv/2.3 does not support Unicode inputs](https://docs.python.org/2/library/csv.html).  
-3. Allowed feature types are: CDS, tRNA, rRNA and tmRNA.  
-For example:  
-    SMDB11_RS00910	rRNA  
-    SMDB11_RS21915	rRNA  
-    SMDB11_RS00015	CDS  
+3. Allowed feature types are: CDS, tRNA, rRNA and tmRNA. For example:  
+SMDB11_RS00910	rRNA<br/>
+SMDB11_RS21915	rRNA<br/>
+SMDB11_RS00015	CDS<br/>
 
 **Output**
 Nucleotide sequences in FASTA format with the header in the format: \>feature type|contig name|locus_tag|position|length|product
 
-**Warnings**
+**Warnings**  
 1. Although it is unlikely in a GenBank file, but please always ensure that there is no duplication of locus_tags in the table because this script treats locus_tag"s as keys for retrieving feature types.
 2. An "IndexError: list index out of range" will arise if the tag list uses Unicode codes.
 
