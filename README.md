@@ -35,9 +35,7 @@ _Type python download_NCBI_records.py -h or --help for help information._
 * --suffix or -s: the file extension, can be "fasta" (default), "fna", "gb", or "gbk". No dot preceding the extension is needed.
 * --outdir or -o: output directory, no backslash at the end.
 
-An example of the input list: seq_list.txt. Note that accession IDs may not include version numbers, such as ".1".
-    HG326223.1  
-    CP011642    
+An example of the input list: seq_list.txt. Note that accession IDs may not include version numbers such as ".1" (HG326223.1, CP011642).  
 
 **References**  
 1. This script is inspired by Mark Schultz's (dr.mark.schultz@gmail.com, GitHub: schultzm) script "downloadGenbankByAccessions.py".
