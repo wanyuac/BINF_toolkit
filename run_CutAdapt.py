@@ -1,5 +1,7 @@
 '''
-This script runs CutAdapt for a list of paired-end readsets. Author: Yu Wan (wanyuac@gmail.com)
+This script runs CutAdapt for a list of paired-end readsets.
+
+Author: Yu Wan (wanyuac@gmail.com)
 Edition history: 15 Dec 2015, 1-2 Jan 2016
 Licence: GNU GPL 2.0
 '''

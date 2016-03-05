@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 '''
-This script add a sample name at the beginning of each sequence in a FASTA file. For example, the header ">g1 description" becomes
+This script adds a sample name at the beginning of each sequence in a FASTA file. For example, the header ">g1 description" becomes
 ">sample1__g1 description" after running this script.
 
 Author: Yu Wan (wanyuac@gmail.com, github.com/wanyuac)
 
-Example: python change_seqid_FASTA.py -i filename.txt (or filename.fna) -o output_dir -n
+Example: python add_sample_name_FASTA.py -i filename.txt (or filename.fna) -o output_dir -n
 
 License: GNU GPL 2.0
 

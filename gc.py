@@ -5,7 +5,7 @@
 # GitHub: https://github.com/wanyuac/BINF_toolkit
 # Input: a fasta file which contains multiple sequences from the standard input
 # Output: for each sequence, print: 1) header 2) total sequence length 3) percentage of G+C 4) entropy of the sequence
-# Command line: python GCH.py < filename.fasta
+# Command line: python gc.py < filename.fasta
 # Treatment of the extended alphabet:
 #    1) consider all of 15 characters
 #    2) construct a weighted-count table using dictionary
