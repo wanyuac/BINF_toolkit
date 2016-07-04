@@ -70,7 +70,7 @@ def main():
         sys.exit("Error: strain number is not equal to the number of FASTA files.")
         
     if n_gen != n_fasta:
-            sys.exit("Error: genome number is not equal to the number of FASTA files.")
+        sys.exit("Error: genome number is not equal to the number of FASTA files.")
     
     # get column names of the output file
     colnames = args.outfmt.split(" ")[1 : ]  # remove the first element -- the format id
