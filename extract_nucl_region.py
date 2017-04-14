@@ -68,8 +68,8 @@ def main():
 		print "The target sequence was extracted."
 	else:
 		print "No sequence was found."
+	return
 	
 # The main program
 if __name__ == "__main__":
     main()
-	
