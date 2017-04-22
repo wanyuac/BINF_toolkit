@@ -15,6 +15,5 @@
 # Licence: Apache-2.0
 
 while IFS= read -r id; do
-  #ln -s ${2}/${id}${1} ${3}/${id}${1}
-  printf ${2}/${id}${1} ${3}/${id}${1}  # for debugging
+  ln -s ${2}/${id}${1} ${3}/${id}${1}
 done < "${4:-/dev/stdin}"  # takes $4 if defined otherwise takes the stdin
