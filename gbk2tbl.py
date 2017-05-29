@@ -32,6 +32,8 @@ Development notes
 Author of this version: Yu Wan (wanyuac@gmail.com, https://github.com/wanyuac)
 Edition history: 20 June 2015 - 11 July 2015
 
+Dependency: Python 2.x. This script does not work under Python 3. An syntax error arises when Python 3 is used.
+
 Licence: GNU GPL 2.1
 
 Some notes about the FASTA header modifiers:
