@@ -4,7 +4,12 @@ This script converts a GenBank file (.gbk or .gb) from Stdin into a Sequin featu
 Package requirement: BioPython and argparse
 
 Usage:
-	python gbk2tbl.py --mincontigsize 200 --prefix any_prefix --modifiers modifier_file.txt < annotation.gbk 2> stderr.txt
+	Simple command:
+		python gbk2tbl.py --mincontigsize 200 --prefix any_prefix --modifiers modifier_file.txt < annotation.gbk
+		cat annotation.gbk | python gbk2tbl.py --mincontigsize 200 --prefix any_prefix --modifiers modifier_file.txt  # pipeline form
+	Redirecting error messages to a text file (optional):
+		python gbk2tbl.py --mincontigsize 200 --prefix any_prefix --modifiers modifier_file.txt < annotation.gbk 2> stderr.txt
+		cat annotation.gbk | python gbk2tbl.py --mincontigsize 200 --prefix any_prefix --modifiers modifier_file.txt 2> stderr.txt
 	Note that this script reads the GenBank file through the stdin ("< annotation.gbk") and you may want to redirect the stderr to a file via "> stderr.txt" (redirection).
 
 Inputs:
@@ -32,7 +37,8 @@ Development notes
 Author of this version: Yu Wan (wanyuac@gmail.com, https://github.com/wanyuac)
 Edition history: 20 June 2015 - 11 July 2015
 
-Dependency: Python 2.x. This script does not work under Python 3. A syntax error arises when Python 3 is used.
+Dependency: Python 2.x. This script does not work under Python 3. A syntax error arises when Python 3 is used. Nonetheless, it is not
+difficult to adapt this script into the Python 3 version (to-do).
 
 Licence: GNU GPL 2.1
 
