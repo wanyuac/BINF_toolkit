@@ -20,17 +20,17 @@ Inputs:
 		For example: [organism=Serratia marcescens subsp. marcescens] [sub-species=marcescens] [strain=AH0650_Sm1] [topology=linear] [moltype=DNA] [tech=wgs] [gcode=11] [country=Australia] [isolation-source=sputum]
 		This line will be copied and printed along with the record name as the definition line of every contig sequence.
 
-Outputs
+Outputs:
 	any_prefix.tbl: the Sequin feature table
 	any_prefix.fsa: the corresponding fasta file
 	These files are inputs for tbl2asn which generates ASN.1 files (*.sqn).
 
-Arguments
+Arguments:
 	--mincontigsize: the minimum contig size, default = 200 in accordance with NCBI's regulation
 	--prefix: the prefix of output filenames, default = 'seq'
 	--modifiers: the filename of the modifier file, default = 'modifiers.txt'
 	  
-Development notes
+Development notes:
 	This script is derived from the one developed by SEQanswers users nickloman (https://gist.github.com/nickloman/2660685/genbank_to_tbl.py) and ErinL who modified nickloman's script and put it
 	on the forum post (http://seqanswers.com/forums/showthread.php?t=19975).
 
