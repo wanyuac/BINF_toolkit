@@ -1,5 +1,5 @@
 #!/bin/sh
-# Makes symbolic links of any kind of files in accordance with a list of sample names as inputs from
+# Makes symbolic links of any kind of files under another directory in accordance with a list of sample names as inputs from
 # either a single-column text file or stdin.
 # Format of the command line:
 #   bash mkSymbolicLins.sh [suffix] [source directory] [output directory] sample_names.txt
