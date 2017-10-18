@@ -29,5 +29,5 @@ fi
 # Otherwise, make symbolic links following the input file ###############
 while read line; do
     IFS="," read -ra paths <<< "$line"  # split the delimited string into an arrary of two elements
-    echo "ln -s ${paths[0]} ${paths[1]}"
+    ln -s ${paths[0]} ${paths[1]}
 done < "${1:-/dev/stdin}"  # accept either a file name or lines from stdin
