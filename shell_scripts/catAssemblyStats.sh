@@ -25,7 +25,7 @@ display_usage(){
 #    contigStats_files.txt
 #    contigStats_combined.csv
 
-HEADER="Assembly,Contig_number,N50,Q1,Q2,Q3,Mean,Smallest,Largest,Length"
+HEADER="Assembly\tContig_number\tN50\tQ1\tQ2\tQ3\tMean\tSmallest\tLargest\tLength"
 STATS="assemblyStats.tsv"
 FILE_LIST="assemblyStats_files.txt"
 NAME_PATTERN="assembly_stats.tsv"  # previous name: *_contigStats.txt
