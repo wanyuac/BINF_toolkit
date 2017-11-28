@@ -3,7 +3,7 @@
 # Concatenates files of assembly statistics that are generated using our lab's script contigMetrics.py.
 # Copyright (C) 2017 Yu Wan <wanyuac@gmail.com>
 # Licensed under the GNU General Public License (GPL) version 3
-# Development history: 31/10/2016, 20/11/2017
+# First edition: 31/10/2016; the latest edition: 28/11/2017
 # Previous name: catContigStats.sh
 
 display_usage(){
@@ -42,7 +42,7 @@ find $1 -name $NAME_PATTERN -type f > $FILE_LIST
 echo "There are `cat ${FILE_LIST} | wc -l` genomes."
 
 # Print contig statistics into a CSV file ##########
-echo $HEADER > $STATS
+echo -e $HEADER > $STATS  # -e: convert each "\t" to a tab character
 
 # Extract the second line of every file and appends it to the CSV file ==========
 files=`cat ${FILE_LIST}`
