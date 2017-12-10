@@ -1,13 +1,17 @@
+#!/usr/bin/env python
+
 """
 This script takes a list of NCBI accession numbers (one for each line) from the STDIN and downloads corresponding entries (either GenBank files or FASTA files) under the target directory.
 
 Usage: python download_NCBI_records.py --records "file:objects.txt" --format fasta --email xxx@xxx.com --ext fna --outdir ./ref --skip > download.log
 	   python download_NCBI_records.py --records "NC_0001,NC_0002" --format genbank --email xxx@xxx.com --ext gbk --outdir ./ref --skip > download.log
 	   python download_NCBI_records.py --records "NC_0001,NC_0002" --format genbank --email xxx@xxx.com --prefix K12 --ext gbk --outdir ./ref --skip > download.log
+	   python download_NCBI_records.py --records "file:objects.tsv" --with_prefix --format fasta --email xxx@xxx.com --ext fna --outdir ./ref --skip > download.log
 	   Type python download_NCBI_records.py -h or --help for help information.
 
 Important options and arguments:
 	--records or -r: can be either a file (must contain a suffix of ".txt") listing targets to be downloaded, or a string of accession IDs separated by commas (no space is allowed).
+	--with_prefix: a logical option specifying that the record file is a tab-delimited file of two columns (without a header line) for accession numbers and prefixes.
 	--format or -f: the format of files to be downloaded
 	--ext or -x: the file extension, can be "fasta" (default), "fna", "gb", or "gbk". No dot preceding the extension is needed.
 	--outdir or -o: output directory, no backslash at the end.
@@ -20,9 +24,8 @@ References:
 	2. Forum post: www.biostars.org/p/63506/
 	
 Author: Yu Wan (wanyuac@gmail.com, https://github.com/wanyuac)
-Development history
-	27 June 2015 - 14 July 2015, 4 November 2015, 6/2/2016, 23/7/2016, 19/11/2017
-	Previous name: download_gbk.py
+First edition: 27 June 2015 - 14 July 2015; the latest edition: 10 Dec 2017
+Previous name: download_gbk.py
 Python version 2 and 3 compatible
 Licence: GNU GPL 2.1
 """
@@ -36,6 +39,7 @@ import time, os
 def parse_arguments():
 	parser = ArgumentParser(description="Read options and arguments")
 	parser.add_argument("--records", "-r", dest = "records", type = str, required = True, help = "Items you want to fetch from NCBI database")
+	parser.add_argument("--with_prefix", "-w", dest = "with_prefix", action = "store_true", required = False, help = "Set when the accession file contains two columns for accessions and prefixes, respectively")
 	parser.add_argument("--format", "-f", dest = "format", type = str, default = "fasta", required = True, help = "Format: fasta(default)/genbank")
 	parser.add_argument("--email", "-e", dest = "email", type = str, required = True, help = "User email address")
 	parser.add_argument("--prefix", "-p", dest="prefix", type = str, required = False, default = None, help = "Common prefix adding to all files")
@@ -47,28 +51,45 @@ def parse_arguments():
 		
 def main():
 	args = parse_arguments()
-	
 	extension = "." + args.ext  # set the file extension
 	Entrez.email = args.email
 	targets = args.records
-	n = 0  # the counter for downloaded files
 	
 	# deal with two kinds of input
 	if targets.startswith("file:"):  # treat "targets" as a file name
 		with open(targets[5 : ], "rU") as f:
-			accessions = f.read().splitlines()  # read each line into a component of a list and drop newline characters
+			lines = f.read().splitlines()  # read each line into a component of a list and drop newline characters
+			
+			# parse every line when there are two columns separated by a tab in each line
+			if args.with_prefix:
+				accessions = {}
+				for line in lines:
+					fields = line.split("\t")  # "accession\tprefix"
+					accessions[fields[0]] = fields[1]  # return a dictionary
+			else:
+				accessions = lines  # a list
+				
 	else:  # treat "targets" as a series of accession numbers separated by commas.
 		accessions = targets.split(",")
 		
 	if not os.path.exists(args.outdir):
 		os.system("mkdir " + args.outdir)
 		
-	for entry in accessions:
-		if args.prefix != None:
-			new_file = os.path.join(args.outdir, args.prefix + "__" + entry + extension)
-		else:
-			new_file = os.path.join(args.outdir, entry + extension)
-			
+	# prepare file names for download
+	new_files = {}
+	if args.with_prefix:  # when "accessions" is a dictionary
+		for entry, prefix in accessions.items():
+			new_files[entry] = os.path.join(args.outdir, prefix + "__" + entry + extension)
+	else:
+		for entry in accessions:  # when "accessions" is a list
+			if args.prefix != None:
+				new_files[entry] = os.path.join(args.outdir, args.prefix + "__" + entry + extension)
+			else:
+				new_files[entry] = os.path.join(args.outdir, entry + extension)
+	
+	# iteratively download files
+	n = 0  # the counter for downloaded files
+	for entry, new_file in new_files.items():
 		if os.path.exists(new_file) and args.skip:
 			print(new_file + " already exists, skipped.")
 			continue  # go to the next entry
