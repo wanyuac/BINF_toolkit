@@ -26,7 +26,7 @@ from Bio.SeqRecord import SeqRecord
 def main():
     # read the list of locus tags
     try:
-        loci = sys.argv[1].rstrip("\r\n")  # drop the newline character in any combinations of \r and \n
+        loci = sys.argv[1].rstrip("\r\n")  # drop the newline character in any combinations of \r and \n (otherwise, the last locus tag does not match to any sequence ID)
         loci = loci.split(",")
     except ValueError:
         print("Missing argument: a comma-separated list of locus tags is necessary.")
