@@ -2,7 +2,7 @@
 # Creating symbolic links according to a table of two columns: original file path and link path, separated by commas.
 # Copyright (C) 2017 Yu Wan <wanyuac@gmail.com>
 # Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
-# First and the latest edition: 18 Oct 2017
+# First edition: 18 Oct 2017, the latest edition: 27 Jun 2018
 
 # Display help information ###############
 display_usage(){
@@ -30,4 +30,4 @@ fi
 while read line; do
     IFS="," read -ra paths <<< "$line"  # split the delimited string into an arrary of two elements
     ln -s ${paths[0]} ${paths[1]}
-done < "${1:-/dev/stdin}"  # accept either a file name or lines from stdin
+done < "$1"  # expect a file name as an input

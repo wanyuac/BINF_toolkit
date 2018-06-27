@@ -5,8 +5,8 @@
 #   bash mkSymbolicLins.sh [suffix] [source directory] [output directory] sample_names.txt
 # Notice: 1. source and output directories must not be the same; 2. no forward slash ("/") should be attached to directory names.
 # Examples:
-#   sh mkVCFLinks.sh '_snps.vcf' ~/data ~/links strain_names.txt
-#   sh mkVCFLinks.sh '_snps.vcf' . ~/links strain_names.txt
+#   sh mkSymbolicLinks.sh '_snps.vcf' ~/data ~/links strain_names.txt
+#   sh mkSymbolicLinks.sh '_snps.vcf' . ~/links strain_names.txt
 #   cat strain_names.txt | sh mkVCFLinks.sh '_snps.vcf' ~/data ~/links
 #   In all examples, symbolic links [strain name]__snps.vcf will be created under the directory ~/links.
 # Limitation: every pair of original file and its symobolic link shares the same filename suffix. Hence users must separate them
