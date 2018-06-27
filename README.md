@@ -10,6 +10,7 @@ This directory consists of scripts developed by Yu Wan for routine bioinformatic
 * [get_gene_seq.py](#get\_gene\_seq)
 * [parse_ENA_sampleInfo_XML.py](#parse\_ENA\_sampleInfo\_XML)
 * [run_CutAdapt.py](#run_CutAdapt)
+* [filename_generator.py](#filename_generator)
 
 ## Manual
 ### <a name="add_sample_name_FASTA"></a>add\_sample\_name\_FASTA.py
@@ -141,3 +142,30 @@ Input: an XML file exported for a list of ERS accession numbers from ENA using t
 This script runs [CutAdapt](https://github.com/marcelm/cutadapt) for a list of paired-end readsets.  
 
 Dependency: [slurm](http://slurm.schedmd.com) on a computational cluster (Linux OS)
+
+### <a name="filename_generator"></a>filename_generator.py
+This script generates a list of file names based on a list of strings. It is useful if you want to generate a list of file names for read sets from a list of bacterial strain names.  
+
+Usage  
+```Python
+python filename_generator.py -i input_file -o output_file -p prefix -s suffix -f from -l to -pe
+```
+
+Input: a plain-text file consists of a list of filenames
+  
+Example input files: (inlist.txt)  
+&nbsp;&nbsp;&nbsp;&nbsp;sample1\_\_genes\_\_results.txt  
+&nbsp;&nbsp;&nbsp;&nbsp;sample2\_\_genes\_\_results.txt  
+
+Command  
+```Python
+python filename_generator.py -i inlist.txt -o outlist.txt -p /reads/ -s .fastq.gz -f 0 -l 7 -pe
+```
+
+Output: a list of new file names generated on the basis of strings in inlist.txt  
+
+Example output items: (outlist.txt)  
+&nbsp;&nbsp;&nbsp;&nbsp;/reads/sample1\_1.fastq.gz  
+&nbsp;&nbsp;&nbsp;&nbsp;/reads/sample1\_2.fastq.gz  
+&nbsp;&nbsp;&nbsp;&nbsp;/reads/sample2\_1.fastq.gz  
+&nbsp;&nbsp;&nbsp;&nbsp;/reads/sample2\_2.fastq.gz  
