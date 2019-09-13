@@ -6,6 +6,7 @@ This directory consists of scripts developed by Yu Wan for routine bioinformatic
 * [download_NCBI_records.py](#download\_NCBI\_records)
 * [extract_nucl_region.py](#extract\_nucl\_region)
 * [gbk2tbl.py](#gbk2tbl)
+* [gbk2tsv.py](#gbk2tsv)
 * [gc.py](#gc)
 * [get_gene_seq.py](#get\_gene\_seq)
 * [parse_ENA_sampleInfo_XML.py](#parse\_ENA\_sampleInfo\_XML)
@@ -86,6 +87,9 @@ These files are inputs for tbl2asn which generates ASN.1 files (*.sqn).
 * --mincontigsize: the minimum contig size, default = 200 in accordance with NCBI's regulation  
 * --prefix: the prefix of output filenames, default = 'seq'  
 * --modifiers: the filename of the modifier file, default = 'modifiers.txt'  
+
+### <a name="gbk2tsv"></a>gbk2tsv.py
+This script converts one or multiple GenBank files into tab-delimited feature tables (plain text), which can be imported to Excel or R afterwards.  
 	
 ### <a name="gc"></a>gc.py
 
@@ -114,9 +118,9 @@ Required module: Bio, argparse, csv
 1. A GenBank file.  
 2. A text file listing selected locus_tags in the following format: locus_tag"\t"feature_type. This file MUST use ASCII codes because [the module csv/2.3 does not support Unicode inputs](https://docs.python.org/2/library/csv.html).  
 3. Allowed feature types are: CDS, tRNA, rRNA and tmRNA. For example:  
-SMDB11_RS00910	rRNA<br/>
-SMDB11_RS21915	rRNA<br/>
-SMDB11_RS00015	CDS<br/>
+	SMDB11_RS00910	rRNA<br/>
+	SMDB11_RS21915	rRNA<br/>
+	SMDB11_RS00015	CDS<br/>
 
 **Output**
 Nucleotide sequences in FASTA format with the header in the format: \>feature type|contig name|locus_tag|position|length|product
@@ -152,7 +156,7 @@ python filename_generator.py -i input_file -o output_file -p prefix -s suffix -f
 ```
 
 Input: a plain-text file consists of a list of filenames
-  
+
 Example input files: (inlist.txt)  
 &nbsp;&nbsp;&nbsp;&nbsp;sample1\_\_genes\_\_results.txt  
 &nbsp;&nbsp;&nbsp;&nbsp;sample2\_\_genes\_\_results.txt  
