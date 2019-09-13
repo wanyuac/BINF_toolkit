@@ -1,4 +1,6 @@
-'''
+#!/usr/bin/python
+
+"""
 This script converts a GenBank file (.gbk or .gb) from Stdin into a Sequin feature table (.tbl), which is an input file of tbl2asn used for creating an ASN.1 file (.sqn).
 
 Package requirement: BioPython and argparse
@@ -34,7 +36,7 @@ Development notes:
 	This script is derived from the one developed by SEQanswers users nickloman (https://gist.github.com/nickloman/2660685/genbank_to_tbl.py) and ErinL who modified nickloman's script and put it
 	on the forum post (http://seqanswers.com/forums/showthread.php?t=19975).
 
-Author of this version: Yu Wan (wanyuac@gmail.com, https://github.com/wanyuac)
+Author of this version: Yu Wan (wanyuac@gmail.com, github.com/wanyuac)
 Edition history: 20 June 2015 - 11 July 2015
 
 Dependency: Python 2.x. This script does not work under Python 3. A syntax error arises when Python 3 is used. Nonetheless, it is not
@@ -48,7 +50,7 @@ Some notes about the FASTA header modifiers:
 		finished genomes of plasmids and bacterial chromosomes: circular
 	An example of the content of the modifier file:
 		[organism=Serratia marcescens subsp. marcescens] [sub-species=marcescens] [strain=AH0650_Sm1]
-'''
+"""
 
 import sys
 from Bio import SeqIO
