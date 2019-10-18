@@ -91,7 +91,7 @@ These files are inputs for tbl2asn which generates ASN.1 files (*.sqn).
 ### <a name="gbk2tsv"></a>gbk2tsv.py
 This script converts one or multiple GenBank files into tab-delimited feature tables (plain text), which can be imported to Excel or R afterwards.  
 
-Relevant blog [post](https://microbialsystems.cn/post/gbk2tsv/).	
+Relevant blog [post](https://microbialsystems.cn/en/post/gbk2tsv/).	
 
 ### <a name="gc"></a>gc.py
 
