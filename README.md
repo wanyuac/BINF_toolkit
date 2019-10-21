@@ -111,7 +111,7 @@ zcat ./example/NJST258_1__CP006923.gbk.gz | python gbk2tbl.py --mincontigsize 20
 This script converts one or multiple GenBank files into tab-delimited feature tables (plain text), which can be imported to Excel or R afterwards.  
 
 Relevant blog [post](https://microbialsystems.cn/en/post/gbk2tsv/).	
-<br>
+<br />
 
 ### <a name="gc"></a>gc.py
 
