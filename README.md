@@ -20,6 +20,7 @@ This script appends a sample name at the beginning of each sequence in a FASTA f
 
 Command example: ```python add_sample_name_FASTA.py -i filename.txt (or filename.fna) -o output_dir -n```  
 
+
 ### <a name="download_NCBI_records"></a>download_NCBI_records.py
 
 This script takes as input a list of NCBI accession numbers (one for each line) from the STDIN and downloads corresponding entries (either GenBank files or FASTA files) under the target directory.  
@@ -46,6 +47,7 @@ An example of the input list: seq_list.txt. Note that accession IDs may not incl
 1. This script is inspired by Mark Schultz's (dr.mark.schultz@gmail.com, GitHub: schultzm) script "downloadGenbankByAccessions.py".
 2. [A post on the BioStars forum](www.biostars.org/p/63506/)
 
+
 ### <a name="extract_nucl_region"></a>extract\_nucl\_region.py
 
 This script extracts a region of nucleotides by positions from a fasta file.  
@@ -61,6 +63,7 @@ This script extracts a region of nucleotides by positions from a fasta file.
 **Requirements**
 * Only one genomic region should be selected;
 * the start and end positions should not spill out.
+
 
 ### <a name="gbk2tbl"></a>gbk2tbl.py
 
@@ -103,10 +106,12 @@ A test data set for this script is provided in the directory _example_. This dat
 zcat ./example/NJST258_1__CP006923.gbk.gz | python gbk2tbl.py --mincontigsize 200 --prefix Kp --modifiers gbk2tbl_modifiers.txt
 ```
 
+
 ### <a name="gbk2tsv"></a>gbk2tsv.py
 This script converts one or multiple GenBank files into tab-delimited feature tables (plain text), which can be imported to Excel or R afterwards.  
 
 Relevant blog [post](https://microbialsystems.cn/en/post/gbk2tsv/).	
+
 
 ### <a name="gc"></a>gc.py
 
@@ -123,6 +128,7 @@ Treatment of the extended alphabet in this script:
 2. construct a weighted-count table using dictionary
 3. for each character in the table, take the probability of being A, G, C or T as effective counts
 4. counts for A, G, C and T is computed by adding up the vectors for every character read from the sequence.
+
 
 ### <a name="get_gene_seq"></a>get_gene_seq.py
 
@@ -147,6 +153,7 @@ Nucleotide sequences in FASTA format with the header in the format: \>feature ty
 1. Although it is unlikely in a GenBank file, but please always ensure that there is no duplication of locus_tags in the table because this script treats locus_tag"s as keys for retrieving feature types.
 2. An "IndexError: list index out of range" will arise if the tag list uses Unicode codes.
 
+
 ### <a name="parse_ENA_sampleInfo_XML"></a>parse_ENA_sampleInfo_XML.py
 
 This script parses an ENA metadata file in XML format and prints a subset of information.  
@@ -160,11 +167,13 @@ Input: an XML file exported for a list of ERS accession numbers from ENA using t
 * tab-delimited text file containing information retrieved from the XML file.  
 * study_accession, sample_accession, secondary_sample_accession, experiment_accession, run_accession, Isolate_ID, Host, Place_of_isolation, Year_of_isolation  
 
+
 ### <a name="run_CutAdapt"></a>run_CutAdapt.py
 
 This script runs [CutAdapt](https://github.com/marcelm/cutadapt) for a list of paired-end readsets.  
 
 Dependency: [slurm](http://slurm.schedmd.com) on a computational cluster (Linux OS)
+
 
 ### <a name="filename_generator"></a>filename_generator.py
 This script generates a list of file names based on a list of strings. It is useful if you want to generate a list of file names for read sets from a list of bacterial strain names.  
