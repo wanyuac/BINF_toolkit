@@ -97,10 +97,10 @@ These files are inputs for tbl2asn which generates ASN.1 files (*.sqn).
 
 **Demonstration**
 
-A test data set for this script is provided in the directory _example_. This data set is composed of a compressed GenBank file *NJST258\_1\_\_CP006923.tar.gz* and a modifier file *gbk2tbl\_modifiers.txt*. Users can run the following command line to produce a TBL file as well as a FASTA file:
+A test data set for this script is provided in the directory _example_. This data set is composed of a compressed GenBank file *NJST258\_1\_\_CP006923.gbk.gz* and a modifier file *gbk2tbl\_modifiers.txt*. Users can run the following command line to produce a TBL file as well as a FASTA file:
 
 ```shell
-cat NJST258_1__CP006923.gbk | python gbk2tbl.py --mincontigsize 200 --prefix Kp --modifiers gbk2tbl_modifiers.txt
+zcat ./example/NJST258_1__CP006923.gbk.gz | python gbk2tbl.py --mincontigsize 200 --prefix Kp --modifiers gbk2tbl_modifiers.txt
 ```
 
 ### <a name="gbk2tsv"></a>gbk2tsv.py
