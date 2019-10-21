@@ -1,0 +1,1 @@
+[organism=Klebsiella pneumoniae] [strain=NJST258_1] [topology=circular] [moltype=DNA] [tech=wgs] [gcode=11] [country=USA] [isolation-source=urine] [collection-date=2010]

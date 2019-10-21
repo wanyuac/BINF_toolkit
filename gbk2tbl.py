@@ -8,19 +8,24 @@ Package requirement: BioPython and argparse
 Usage:
 	Simple command:
 		python gbk2tbl.py --mincontigsize 200 --prefix any_prefix --modifiers modifier_file.txt < annotation.gbk
-		cat annotation.gbk | python gbk2tbl.py --mincontigsize 200 --prefix any_prefix --modifiers modifier_file.txt  # pipeline form
+		cat annotation.gbk | python gbk2tbl.py --mincontigsize 200 --prefix any_prefix --modifiers modifier_file.txt  # integrate gbk2tbl into a pipeline
 	Redirecting error messages to a text file (optional):
 		python gbk2tbl.py --mincontigsize 200 --prefix any_prefix --modifiers modifier_file.txt < annotation.gbk 2> stderr.txt
 		cat annotation.gbk | python gbk2tbl.py --mincontigsize 200 --prefix any_prefix --modifiers modifier_file.txt 2> stderr.txt
 	Note that this script reads the GenBank file through the stdin ("< annotation.gbk") and you may want to redirect the stderr to a file via "> stderr.txt" (redirection).
-
+	
 Inputs:
 	A GenBank file, which ought to be passed to the script through the standard input (stdin).
 	A modifier file: a plain text file containing modifiers for every FASTA definition line.
-		All modifiers must be written in a single line and are separated by a single space character.
+		All FASTA header modifiers must be written in a single line and are separated by a space character. This line will
+		be copied and directly printed along with the record name as the definition line of every contig sequence.
 		No space should be placed besides the '=' sign. Check http://www.ncbi.nlm.nih.gov/Sequin/modifiers.html for choosing a proper format for modifiers.
-		For example: [organism=Serratia marcescens subsp. marcescens] [sub-species=marcescens] [strain=AH0650_Sm1] [topology=linear] [moltype=DNA] [tech=wgs] [gcode=11] [country=Australia] [isolation-source=sputum]
-		This line will be copied and printed along with the record name as the definition line of every contig sequence.
+		For example, the content of a modifier file can be (no tab character):
+			[organism=Serratia marcescens subsp. marcescens] [sub-species=marcescens] [strain=AH0650_Sm1] [topology=linear] [moltype=DNA] [tech=wgs] [gcode=11] [country=Australia] [isolation-source=sputum]
+		Furthermore, regarding the modifier 'topology':
+			[topology=?]: the molecular topology (circular/linear) of the sequence if this information is not contained in records
+				For contigs: linear (the default value)
+				For finished genomes of plasmids and bacterial chromosomes: circular
 
 Outputs:
 	any_prefix.tbl: the Sequin feature table
@@ -37,21 +42,14 @@ Development notes:
 	on the forum post (http://seqanswers.com/forums/showthread.php?t=19975).
 
 Author of this version: Yu Wan (wanyuac@gmail.com, github.com/wanyuac)
-Edition history: 20 June 2015 - 11 July 2015
+Creation: 20 June 2015 - 11 July 2015; the latest edition: 21 October 2019
 
-Dependency: Python 2.x. This script does not work under Python 3. A syntax error arises when Python 3 is used. Nonetheless, it is not
-difficult to adapt this script into the Python 3 version (to-do).
+Dependency: Python versions 2 and 3 compatible.
 
 Licence: GNU GPL 2.1
-
-Some notes about the FASTA header modifiers:
-	[topology=?]: the molecular topology (circular/linear) of the sequence if this information is not contained in records
-		contigs: linear (the default value)
-		finished genomes of plasmids and bacterial chromosomes: circular
-	An example of the content of the modifier file:
-		[organism=Serratia marcescens subsp. marcescens] [sub-species=marcescens] [strain=AH0650_Sm1]
 """
 
+from __future__ import print_function
 import sys
 from Bio import SeqIO
 from argparse import ArgumentParser
@@ -70,7 +68,9 @@ def read_modifiers(file):
 		s = f.readline()  # only read once
 	return s
 
-allowed_qualifiers = ['locus_tag', 'gene', 'product', 'pseudo', 'protein_id', 'gene_desc', 'old_locus_tag', 'note', 'inference', 'organism', 'mol_type', 'strain', 'sub_species', 'isolation-source', 'country']
+allowed_qualifiers = ['locus_tag', 'gene', 'product', 'pseudo', 'protein_id', 'gene_desc', 'old_locus_tag', 'note', 'inference', \
+					  'organism', 'mol_type', 'strain', 'sub_species', 'isolation-source', 'country', \
+					  'collection_date']  # In GenBank files, the qualifier 'collection-date' is written as 'collection_date'.
 '''
 These are selected qualifiers because we do not want to see qualifiers such as 'translation', 'transl_table', or 'codon_start' in the feature table.
 Qualifiers 'organism', 'mol_type', 'strain', 'sub_species', 'isolation-source', 'country' belong to the feature 'source'.
@@ -86,28 +86,28 @@ def main():
 
 	for rec in records:  # for every SeqRecord object in the list 'records'
 		if len(rec) <= args.mincontigsize:  # filter out small contigs
-			print >> sys.stderr, 'skipping small contig %s' % (rec.id)
+			print('skipping small contig %s' % (rec.id), file=sys.stderr)
 			continue  # start a new 'for' loop
 		contig_num += 1
-		print rec.name  # print the contig name to STDOUT
+		print(rec.name)  # print the contig name to STDOUT
 		
 		# write the fasta file 
 		rec.description = modifiers
 		SeqIO.write([rec], fasta_fh, 'fasta')  # Prints this contig's sequence to the fasta file. The sequence header will be rec.description.
 
 		# write the feature table
-		print >> feature_fh, '>Feature %s' % (rec.name)  # write the first line of this record in the feature table: the LOCUS name
+		print('>Feature %s' % (rec.name), file = feature_fh)  # write the first line of this record in the feature table: the LOCUS name
 		for f in rec.features:
 			# print the coordinates
 			if f.strand == 1:
-				print >> feature_fh, '%d\t%d\t%s' % (f.location.nofuzzy_start + 1, f.location.nofuzzy_end, f.type)
+				print('%d\t%d\t%s' % (f.location.nofuzzy_start + 1, f.location.nofuzzy_end, f.type), file = feature_fh)
 			else:
-				print >> feature_fh, '%d\t%d\t%s' % (f.location.nofuzzy_end, f.location.nofuzzy_start + 1, f.type)
+				print('%d\t%d\t%s' % (f.location.nofuzzy_end, f.location.nofuzzy_start + 1, f.type), file = feature_fh)
 
 			if (f.type == 'CDS') and ('product' not in f.qualifiers):
 				f.qualifiers['product'] = 'hypothetical protein'
 			# print qualifiers (keys and values)
-			for (key, values) in f.qualifiers.iteritems():
+			for (key, values) in f.qualifiers.items():
 				'''
 				Apply the iteritems() method of the dictionary f.qualifiers for (key, values) pairs
 				iteritems() is a generator that yields 2-tuples for a dictionary. It saves time and memory but is slower than the items() method.
@@ -115,10 +115,10 @@ def main():
 				if key not in allowed_qualifiers:
 					continue  # start a new 'for' loop of f, skipping the following 'for' statement of v
 				for v in values:  # else, write all values under this key (qualifier's name)
-					print >> feature_fh, '\t\t\t%s\t%s' % (key, v)
+					print('\t\t\t%s\t%s' % (key, v), file = feature_fh)
 	fasta_fh.close()  # finish the generation of the FASTA file
 	feature_fh.close()  # finish the generation of the feature table
-	print str(contig_num) + ' records have been converted.'
+	print(str(contig_num) + ' records have been converted.')
 
 # call the main function
 if __name__ == '__main__':

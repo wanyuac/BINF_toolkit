@@ -25,11 +25,14 @@ Command example: python add_sample_name_FASTA.py -i filename.txt (or filename.fn
 This script takes as input a list of NCBI accession numbers (one for each line) from the STDIN and downloads corresponding entries (either GenBank files or FASTA files) under the target directory.  
 
 **Examples**  
+
+```shell
 python download\_NCBI\_records.py --records "file:objects.txt" --format fasta --email xxx@xxx.com --suffix fna --outdir ./ref --skip > download.log  
 
-python download\_NCBI\_records.py --records "NC_0001,NC_0002" --format genbank --email xxx@xxx.com --suffix gbk --outdir ./ref --skip > download.log  
+python download\_NCBI\_records.py --records "NC_0001,NC_0002" --format genbank --email xxx@xxx.com --suffix gbk --outdir ./ref --skip > download.log 
+```
 
-_Type python download_NCBI_records.py -h or --help for help information._  
+Type ```python download_NCBI_records.py -h``` or ```--help``` for help information.  
 
 **Notes about options and option arguments**
 * --records: can be either a file (must contain a suffix of ".txt") listing targets to be downloaded, or a string of accession IDs separated by commas (no space is allowed).
@@ -66,7 +69,10 @@ This script converts a GenBank file (.gbk or .gb) from Stdin into a Sequin featu
 Package requirement: BioPython and argparse  
 
 **Usage**   
-python gbk2tbl.py --mincontigsize 200 --prefix any_prefix --modifiers modifier_file.txt \< annotation.gbk 2\> stderr.txt  
+
+```shell
+python gbk2tbl.py --mincontigsize 200 --prefix any_prefix --modifiers modifier_file.txt \< annotation.gbk 2\> stderr.txt 
+```
 
 Note that this script reads the GenBank file through the stdin ("\< annotation.gbk") and you may want to redirect the stderr to a file via "\> stderr.txt" (redirection).  
 
@@ -84,9 +90,18 @@ A modifier file: a plain text file containing modifiers for every FASTA definiti
 These files are inputs for tbl2asn which generates ASN.1 files (*.sqn).  
 
 **Arguments**  
+
 * --mincontigsize: the minimum contig size, default = 200 in accordance with NCBI's regulation  
 * --prefix: the prefix of output filenames, default = 'seq'  
 * --modifiers: the filename of the modifier file, default = 'modifiers.txt'  
+
+**Demonstration**
+
+A test data set for this script is provided in the directory _example_. This data set is composed of a compressed GenBank file *NJST258\_1\_\_CP006923.tar.gz* and a modifier file *gbk2tbl\_modifiers.txt*. Users can run the following command line to produce a TBL file as well as a FASTA file:
+
+```shell
+cat NJST258_1__CP006923.gbk | python gbk2tbl.py --mincontigsize 200 --prefix Kp --modifiers gbk2 tbl_modifiers.txt
+```
 
 ### <a name="gbk2tsv"></a>gbk2tsv.py
 This script converts one or multiple GenBank files into tab-delimited feature tables (plain text), which can be imported to Excel or R afterwards.  
@@ -101,7 +116,7 @@ Input: a fasta file which contains multiple sequences from the standard input
 
 Output: for each sequence, the script prints: the header line, total sequence length, (G+C)% and entropy of the input sequence.  
 
-Command line: python gc.py \< filename.fasta  
+Command line: ```python gc.py \< filename.fasta```  
 
 Treatment of the extended alphabet in this script:
 1. consider all of 15 characters
@@ -114,9 +129,10 @@ Treatment of the extended alphabet in this script:
 This script extracts gene sequences from a GenBank file, in accordance with a list of (locus_tag, feature type) tuples.
 Required module: Bio, argparse, csv  
 
-**Usage**: python get\_gene\_seq.py --tags _locus\_tag file_ --gb _GenBank file_ \> genes.fna  
+**Usage**: ```python get\_gene\_seq.py --tags _locus\_tag file_ --gb _GenBank file_ \> genes.fna```  
 
 **Inputs**  
+
 1. A GenBank file.  
 2. A text file listing selected locus_tags in the following format: locus_tag"\t"feature_type. This file MUST use ASCII codes because [the module csv/2.3 does not support Unicode inputs](https://docs.python.org/2/library/csv.html).  
 3. Allowed feature types are: CDS, tRNA, rRNA and tmRNA. For example:  
@@ -135,11 +151,12 @@ Nucleotide sequences in FASTA format with the header in the format: \>feature ty
 
 This script parses an ENA metadata file in XML format and prints a subset of information.  
 
-**Usage**: python parse\_ENA\_sampleInfo\_XML.py ERP000909.xml > samples.txt
+**Usage**: ```python parse\_ENA\_sampleInfo\_XML.py ERP000909.xml > samples.txt```
 
 Input: an XML file exported for a list of ERS accession numbers from ENA using the REST URLs API. For example, one can download an XML file for sample ERS086023 using the link [http://www.ebi.ac.uk/ena/data/view/ERS086023&display=xml](http://www.ebi.ac.uk/ena/data/view/ERS086023&display=xml).
 
 **Outputs**  
+
 * tab-delimited text file containing information retrieved from the XML file.  
 * study_accession, sample_accession, secondary_sample_accession, experiment_accession, run_accession, Isolate_ID, Host, Place_of_isolation, Year_of_isolation  
 
@@ -153,7 +170,7 @@ Dependency: [slurm](http://slurm.schedmd.com) on a computational cluster (Linux 
 This script generates a list of file names based on a list of strings. It is useful if you want to generate a list of file names for read sets from a list of bacterial strain names.  
 
 Usage  
-```Python
+```shell
 python filename_generator.py -i input_file -o output_file -p prefix -s suffix -f from -l to -pe
 ```
 
@@ -164,7 +181,7 @@ Example input files: (inlist.txt)
 &nbsp;&nbsp;&nbsp;&nbsp;sample2\_\_genes\_\_results.txt  
 
 Command  
-```Python
+```shell
 python filename_generator.py -i inlist.txt -o outlist.txt -p /reads/ -s .fastq.gz -f 0 -l 7 -pe
 ```
 
