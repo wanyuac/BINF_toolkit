@@ -18,7 +18,7 @@ This directory consists of scripts developed by Yu Wan for routine bioinformatic
 
 This script appends a sample name at the beginning of each sequence in a FASTA file. For example, the header "\>g1 description" becomes "\>sample1__g1 description" after running this script.  
 
-Command example: python add_sample_name_FASTA.py -i filename.txt (or filename.fna) -o output_dir -n  
+Command example: ```python add_sample_name_FASTA.py -i filename.txt (or filename.fna) -o output_dir -n```  
 
 ### <a name="download_NCBI_records"></a>download_NCBI_records.py
 
