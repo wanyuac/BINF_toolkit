@@ -12,7 +12,8 @@ display_usage(){
            ./linkFiles.sh [input CSV file]
            cat [input CSV file] | ./linkFiles.sh
     The CSV file should not contain a header line. The first column consists of original file paths, and
-    the second column consists of link paths.
+    the second column consists of link paths:
+	    [old name & path],[new name & path]\n
     An example of the CSV file:
     ~/data/genome1_1.fasta,/scratch/input/genome1_unimelb.fna
     ~/data/genome1_2.fasta,/scratch/input/genome1_zju.fna
