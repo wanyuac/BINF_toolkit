@@ -4,7 +4,7 @@
 # Publication: 3/3/2020
 
 # Guidance #########################
-display_usage(){
+display_usage() {
     echo "
     Usage:
         Rename files according to a two-column TSV file: [old filename]\t[new filename]

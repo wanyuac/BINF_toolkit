@@ -10,11 +10,12 @@ Usage: python download_NCBI_records.py --records "file:objects.txt" --with_prefi
 	   Type python download_NCBI_records.py -h or --help for help information.
 
 Important options and arguments:
-	--records or -r: can be either a file (must contain a suffix of ".txt") listing targets to be downloaded, or a string of accession IDs separated by commas (no space is allowed).
-	--with_prefix: a logical option specifying that the record file is a tab-delimited file of two columns (without a header line) for accession numbers and prefixes.
-	--format or -f: the format of files to be downloaded
-	--ext or -x: the file extension, can be "fasta" (default), "fna", "gb", or "gbk". No dot preceding the extension is needed.
-	--outdir or -o: output directory, no backslash at the end.
+	--records or -r: Can be either a file (must contain a suffix of ".txt") listing targets to be downloaded, or a string of accession IDs separated by commas (no space is allowed).
+	--with_prefix: A logical option specifying that the record file is a tab-delimited file of two columns (without a header line) for accession numbers and prefixes.
+	--no_accession: Set this flag to not attach an NCBI accession number after the genome name in each file name. Only applicable when --prefix != None. This option may cause overwriting output files when multiple NCBI accessions share the same prefix.
+	--format or -f: The format of files to be downloaded
+	--ext or -x: The file extension, can be "fasta" (default), "fna", "gb", or "gbk". No dot preceding the extension is needed.
+	--outdir or -o: Output directory, no backslash at the end.
 An example of the input list: seq_list.txt. Note that accession IDs may not include version numbers, such as ".1".
 	HG326223.1\n
 	CP011642\n
@@ -24,7 +25,7 @@ References:
 	2. Forum post: www.biostars.org/p/63506/
 	
 Author: Yu Wan (wanyuac@gmail.com, https://github.com/wanyuac)
-First edition: 27 June 2015 - 14 July 2015; the latest edition: 10 Dec 2017
+First publication: 27 June 2015 - 14 July 2015; the latest edition: 9 March 2020
 Previous name: download_gbk.py
 Python version 2 and 3 compatible
 Licence: GNU GPL 2.1
@@ -43,6 +44,7 @@ def parse_arguments():
 	parser.add_argument("--format", "-f", dest = "format", type = str, default = "fasta", required = True, help = "Format: fasta(default)/genbank")
 	parser.add_argument("--email", "-e", dest = "email", type = str, required = True, help = "User email address")
 	parser.add_argument("--prefix", "-p", dest="prefix", type = str, required = False, default = None, help = "Common prefix adding to all files")
+	parser.add_argument("--no_accession", "-n", dest = "no_accession", action = "store_true", required = False, help = "Set this flag to not attach an NCBI accession number after the genome name in each file name. Only applicable when --prefix != None.")
 	parser.add_argument("--ext", "-x", dest = "ext", type = str, default = "fasta", required = False, help = "File extension: fasta (default), fna, gb, or gbk")
 	parser.add_argument("--outdir", "-o", dest = "outdir", type = str, default = ".", required = False, help = "Destination directory, no backslash at the end")
 	parser.add_argument("--skip", "-sk", dest = "skip", action = "store_true", required = False, help = "Set to skip downloaded files")
@@ -75,15 +77,21 @@ def main():
 	if not os.path.exists(args.outdir):
 		os.system("mkdir " + args.outdir)
 		
-	# prepare file names for download
+	# set up file names for download
 	new_files = {}
 	if args.with_prefix:  # when "accessions" is a dictionary
 		for entry, prefix in accessions.items():
-			new_files[entry] = os.path.join(args.outdir, prefix + "__" + entry + extension)
+			if args.no_accession:
+				new_files[entry] = os.path.join(args.outdir, prefix + extension)
+			else:
+				new_files[entry] = os.path.join(args.outdir, prefix + "__" + entry + extension)
 	else:
 		for entry in accessions:  # when "accessions" is a list
 			if args.prefix != None:
-				new_files[entry] = os.path.join(args.outdir, args.prefix + "__" + entry + extension)
+				if args.no_accession:
+					new_files[entry] = os.path.join(args.outdir, args.prefix + extension)
+				else:
+					new_files[entry] = os.path.join(args.outdir, args.prefix + "__" + entry + extension)
 			else:
 				new_files[entry] = os.path.join(args.outdir, entry + extension)
 	
