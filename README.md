@@ -43,7 +43,11 @@ An example of the input list: seq_list.txt. Note that accession IDs may not incl
 
 **References**  
 1. This script is inspired by Mark Schultz's (dr.mark.schultz@gmail.com, GitHub: schultzm) script "downloadGenbankByAccessions.py".  
-2. [A post on the BioStars forum](www.biostars.org/p/63506/)  
+
+2. [A post on the BioStars forum](https://www.biostars.org/p/63506/).  
+
+3. Damien Farrell's blog post: [Retrieving genome assemblies via Entrez with Python](https://dmnfarrell.github.io/bioinformatics/assemblies-genbank-python).  
+
 <br />
 
 ### <a name="extract_nucl_region"></a>extract\_nucl\_region.py
