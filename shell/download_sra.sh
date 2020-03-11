@@ -17,8 +17,8 @@ show_help() {
 }
 
 if [ -z "$1" ] || [[ $1 == -h ]]; then
-	show_help
-	exit
+    show_help
+    exit
 fi
 
 # Main function #########################
@@ -32,9 +32,9 @@ for i in "$@"; do
         accessions="${i#*=}"
         accessions=( `echo $accessions | tr "," "\n"` )
         ;;
-		-m=*)
+        -m=*)
         env_module="${i#*=}"
-		;;
+        ;;
         -o=*)
         out_dir="${i#*=}"
         ;;
@@ -45,16 +45,16 @@ done
 
 # Load module
 if [ ! -z "${env_module}" ]; then
-	echo "Loading environment module ${env_module}."
-	module load ${env_module}
+    echo "Loading environment module ${env_module}."
+    module load ${env_module}
 fi
 
 # Download and parse read files
 cd ${out_dir}
 
 for i in "${accessions[@]}"; do
-	echo "Downloading ${i}."
-	fastq-dump --gzip --readids --split-3 $i
+    echo "Downloading ${i}."
+    fastq-dump --gzip --readids --split-3 $i
 done
 
 echo 'All download tasks have been finished successfully.'
