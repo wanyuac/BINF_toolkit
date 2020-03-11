@@ -50,11 +50,9 @@ if [ ! -z "${env_module}" ]; then
 fi
 
 # Download and parse read files
-cd ${out_dir}
-
 for i in "${accessions[@]}"; do
     echo "Downloading ${i}."
-    fastq-dump --gzip --readids --split-3 $i
+    fastq-dump --readids --outdir ${out_dir} --gzip --split-3 $i
 done
 
 echo 'All download tasks have been finished successfully.'
