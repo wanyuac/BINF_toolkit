@@ -31,6 +31,7 @@ def parse_arguments():
     parser.add_argument('-o', type = str, required = False, default = 'metadata.tsv', help = 'Filename for extracted attribute values')
     parser.add_argument('-d', type = str, required = False, default = './record', help = 'Directory name for downloaded BioSample records')
     parser.add_argument('-r', action = 'store_true', required = False, help = 'Flag it to override existing XML files')
+    parser.add_argument('-n', action = 'store_true', required = False, help = 'Flag it to not replace missing values with NAs')
     
     return parser.parse_args()
 
@@ -53,13 +54,14 @@ def main():
         if p == None:
             continue
         else:
-            extract_attributes(accession = a, xml_path = p, out_file = f, attrs = attributes)
+            extract_attributes(accession = a, xml_path = p, out_file = f, attrs = attributes, \
+                               fill_null = not args.n)  # By default, fill missing values with NAs.
     f.close()
     
     return
 
 
-def extract_attributes(accession, xml_path, out_file, attrs):
+def extract_attributes(accession, xml_path, out_file, attrs, fill_null):
     print("Parsing record %s:" % accession)
     xml = xmlTree.parse(xml_path).getroot()  # Read and parse the XML file
     parental_domain = xml[0]  # Tag: BioSample
@@ -71,12 +73,19 @@ def extract_attributes(accession, xml_path, out_file, attrs):
             new_line = [accession]
             for a in attrs:
                 if a in parsed_attrs:
-                    new_line.append(attr_dict[a])
+                    v = attr_dict[a]
+                    if v == '' and fill_null:
+                        new_line.append('NA')
+                    else:
+                        new_line.append(v)
                 else:
-                    print('    Warning: attribute %s is not found in record %s.' % (a, accession))
-                    new_line.append('NA')  # A NULL space holder.
+                    print('  Warning: attribute %s is not found in record %s.' % (a, accession))
+                    if fill_null:
+                        new_line.append('NA')
+                    else:
+                        new_line.append('')  # A NULL space holder.
             out_file.write('\t'.join(new_line) + '\n')
-            print('    Record %s has been successfully parsed.' % accession)
+            print('  Record %s has been successfully parsed.' % accession)
     
     return
 
@@ -113,7 +122,7 @@ def download_records(accessions, email, out_dir, override):
                     f.write(handle.read())  # Save the current record as an XML file
                     f.close()
                 except:
-                    print('    Warning: record %s is not found. Skip this record.')
+                    print('  Warning: record %s is not found. Skip this record.')
                     paths[a] = None
                 time.sleep(1)
             else:
@@ -128,7 +137,7 @@ def download_records(accessions, email, out_dir, override):
                 f.write(handle.read())  # Save the current record as an XML file
                 f.close()
             except:
-                print('    Warning: record %s is not found. Skip this record.')
+                print('  Warning: record %s is not found. Skip this record.')
                 paths[a] = None
             time.sleep(1)
     
@@ -149,7 +158,7 @@ def get_accession_numbers(s):
             sys.exit('Error: accession file %s is not accessible.' % s)
     else:
         accs = s.split(',')
-    print('    Altogether %i accession numbers have been imported.' % len(accs))
+    print('  Altogether %i accession numbers have been imported.' % len(accs))
 
     return accs
 
