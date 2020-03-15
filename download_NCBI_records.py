@@ -44,7 +44,7 @@ from argparse import ArgumentParser
 
 
 def parse_arguments():
-	parser = ArgumentParser(description="Read options and arguments")
+	parser = ArgumentParser(description = "Read options and arguments")
 	parser.add_argument("--records", "-r", dest = "records", type = str, required = True, \
 						help = "Items you want to fetch from NCBI database")
 	parser.add_argument("--with_prefix", "-w", dest = "with_prefix", action = "store_true", required = False, \
