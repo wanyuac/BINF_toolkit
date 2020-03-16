@@ -64,6 +64,12 @@ for i in "$@"; do
     esac
 done
 
+# Check the output directory
+if [ ! -d "${out_dir}" ]; then
+    echo "Making the output directory: ${out_dir}"
+    mkdir -p ${out_dir}
+fi
+
 # Load module
 if [ ! -z "${env_module}" ]; then
     echo "Loading environment module ${env_module}."
@@ -87,12 +93,12 @@ if [ "${read_file}" = true ]; then
             if [ "${paired_end}" = true ]; then  # Paired-end reads
                 echo "Downloading ${accession} and rename files as ${genome}_1.fastg.gz and ${genome}_2.fastq.gz."
                 fastq-dump --readids --outdir ${out_dir} --gzip --split-3 ${accession}  # Download and split the read file
-                mv ${out_dir}/${accession}_1.fastg.gz ${out_dir}/${genome}_1.fastq.gz
-                mv ${out_dir}/${accession}_2.fastg.gz ${out_dir}/${genome}_2.fastq.gz
+                mv ${out_dir}/${accession}_1.fastq.gz ${out_dir}/${genome}_1.fastq.gz
+                mv ${out_dir}/${accession}_2.fastq.gz ${out_dir}/${genome}_2.fastq.gz
             else  # Single-end reads
                 echo "Download ${accession} and rename it as ${genome}.fastq.gz."
                 fastq-dump --readids --outdir ${out_dir} --gzip --split-3 ${accession}
-                mv ${out_dir}/${accession}.fastg.gz ${out_dir}/${genome}.fastq.gz
+                mv ${out_dir}/${accession}.fastq.gz ${out_dir}/${genome}.fastq.gz
             fi
             echo -e "Finished processing ${accession}.\n"
             sleep 1
