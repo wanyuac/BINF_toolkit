@@ -13,7 +13,7 @@ Important options and arguments:
 	--records or -r: Can be either a file (must contain a suffix of ".txt") listing targets to be downloaded, or a string of accession IDs separated by commas (no space is allowed).
 	--with_prefix: A logical option specifying that the record file is a tab-delimited file of two columns (without a header line) for accession numbers and prefixes.
 	--no_accession: Set this flag to not attach an NCBI accession number after the genome name in each file name. Only applicable when --prefix != None. This option may cause overwriting output files when multiple NCBI accessions share the same prefix.
-	--format or -f: The format of files to be downloaded
+	--format or -f: The format of files to be downloaded. This option is not used when --db = assembly.
 	--db: Customised specification of an NCBI database to retrieve records from
 	--ext or -x: The file extension, can be "fasta" (default), "fna", "gb", or "gbk". No dot preceding the extension is needed.
 	--outdir or -o: Output directory, no backslash at the end.
