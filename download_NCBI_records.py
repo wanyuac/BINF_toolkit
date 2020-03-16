@@ -17,9 +17,14 @@ Important options and arguments:
 	--db: Customised specification of an NCBI database to retrieve records from
 	--ext or -x: The file extension, can be "fasta" (default), "fna", "gb", or "gbk". No dot preceding the extension is needed.
 	--outdir or -o: Output directory, no backslash at the end.
+
 An example of the input list: seq_list.txt. Note that accession IDs may not include version numbers, such as ".1".
 	HG326223.1\n
 	CP011642\n
+	
+The input file may be composed of two columns: accession number, prefix (genome name), sepearated by a tab character. For instance,
+    HG326223.1\tDb11\n
+    CP011642\tCAV1492\n
 
 References:
 	1. This script is inspired by Mark Schultz's (dr.mark.schultz@gmail.com, GitHub: schultzm) script "downloadGenbankByAccessions.py" stored under the master branch of github.com/katholt/holtlab.
