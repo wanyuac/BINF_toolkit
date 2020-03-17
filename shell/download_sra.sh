@@ -96,16 +96,15 @@ if [ "${read_file}" = true ]; then
             if [ "${paired_end}" = true ]; then  # Paired-end reads
                 echo "Downloading ${accession} and rename files as ${genome}_1.fastg.gz and ${genome}_2.fastq.gz."
                 fastq-dump --readids --outdir ${out_dir} --gzip --split-3 ${accession}  # Download and split the read file
-                sleep 2  # Pause, to avoid too many connection requests to NCBI's server.
                 mv ${out_dir}/${accession}_1.fastq.gz ${out_dir}/${genome}_1.fastq.gz
                 mv ${out_dir}/${accession}_2.fastq.gz ${out_dir}/${genome}_2.fastq.gz
             else  # Single-end reads
                 echo "Download ${accession} and rename it as ${genome}.fastq.gz."
                 fastq-dump --readids --outdir ${out_dir} --gzip --split-3 ${accession}
-                sleep 2
                 mv ${out_dir}/${accession}.fastq.gz ${out_dir}/${genome}.fastq.gz
             fi
             echo -e "Finished processing ${accession}.\n"
+            sleep 2  # Pause, to avoid too many connection requests to NCBI's server.
         done
     else  # A single-column input file
         echo -e "Use accession numbers as filenames of downloaded read sets.\n"
