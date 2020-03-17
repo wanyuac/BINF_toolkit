@@ -12,15 +12,18 @@ show_help() {
         -m: (optional) Name of an sra-toolkit module, which contains the program fastq-dump.
         -o: Output directory (no forward slash).
         -a: A comma-delimited string of target accession numbers (SRR*)
-        -f: A single-column text file of SRR numbers or a two-column tab-delimited file of SRR numbers (1st column) and genome names (2nd column).
+        -f: A single-column text file of SRR numbers or a two-column tab-delimited file of SRR numbers (1st column)
+            and genome names (2nd column).
         -r: A logical flag turning on replacement of SRR numbers with genome names for read files.
         -s: A logical flag notifying this script that the reads to be downloaded are single-end.
     Example command:
-        download_sra.sh -m='sra-toolkit/2.8.1-3' -o='reads' -a='SRR00001,SRR00002,SRR00003'
-        download_sra.sh -m='sra-toolkit/2.8.1-3' -o='reads' -f='accessions.tsv' -r
+        download_sra.sh -m='sra-toolkit/2.8.1-3' -o='reads' -a='SRR00001,SRR00002,SRR00003' > download.log
+        download_sra.sh -m='sra-toolkit/2.8.1-3' -o='reads' -f='accessions.tsv' -r > download.log
     Note that:
         1. The -a argument is ignored when the -f argument is set.
         2. Newline characters in the input file must be '\n' rather than '\r\n'.
+        3. Fastq-dump sometimes fails in downloading or parsing read files. Remember to check the STDOUT output
+           of download_sra.sh after each run.
     "
 }
 
