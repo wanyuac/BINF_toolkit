@@ -2,7 +2,7 @@
 # Copyright (C) 2020 Yu Wan <wanyuac@126.com>
 # Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
 # Publication: 11 March 2020
-# Last modification: 16 March 2020
+# Last modification: 17 March 2020
 
 # Help information #########################
 show_help() {
@@ -85,7 +85,7 @@ if [ "${read_file}" = true ]; then
     IFS=$'\n' read -d '' -r -a lines_array < "${acc_list}"
     
     if [ "${replace_names}" = true ]; then
-        echo "Genome names will substitute for accession numbers for read sets."
+        echo -e "Genome names will substitute for accession numbers for read sets.\n"
         for line in "${lines_array[@]}"; do
             IFS=$'\t' read -r -a line_fields <<< "${line}"
             accession="${line_fields[0]}"
@@ -104,6 +104,7 @@ if [ "${read_file}" = true ]; then
             sleep 1
         done
     else  # A single-column input file
+        echo -e "Use accession numbers as filenames of downloaded read sets.\n"
         for accession in "${lines_array[@]}"; do
             echo "Downloading read set ${accession}."
             fastq-dump --readids --outdir ${out_dir} --gzip --split-3 ${accession}
@@ -112,6 +113,7 @@ if [ "${read_file}" = true ]; then
         done
     fi
 else  # When accession numbers come from the -a parameter
+    echo -e "Reading accession numbers from the parameter '-a'.\n"
     for i in "${accessions[@]}"; do  # Filename replacement is not supported under this mode.
         echo "Downloading and parsing ${i}."
         fastq-dump --readids --outdir ${out_dir} --gzip --split-3 $i
