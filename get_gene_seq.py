@@ -20,7 +20,6 @@ Inputs
 			SMDB11_RS00910	rRNA
 			SMDB11_RS21915	rRNA
 			SMDB11_RS00015	CDS
-			
 		Or:
 			gene1	CDS
 			gene2	CDS
