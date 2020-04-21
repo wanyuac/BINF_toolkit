@@ -32,7 +32,7 @@ References:
 	3. Damien Farrell's blog post: Retrieving genome assemblies via Entrez with Python (dmnfarrell.github.io/bioinformatics/assemblies-genbank-python)
 	
 Author: Yu Wan (wanyuac@126.com, https://github.com/wanyuac)
-First publication: 27 June 2015 - 14 July 2015; the latest edition: 10 March 2020
+First publication: 27 June 2015 - 14 July 2015; the latest modification: 21 April 2020
 Previous name: download_gbk.py
 Python version 2 and 3 compatible
 Licence: GNU GPL 2.1
@@ -51,7 +51,7 @@ from argparse import ArgumentParser
 def parse_arguments():
 	parser = ArgumentParser(description = "Read options and arguments")
 	parser.add_argument("--records", "-r", dest = "records", type = str, required = True, \
-						help = "Items you want to fetch from NCBI database")
+						help = "Items you want to fetch from the NCBI database")
 	parser.add_argument("--with_prefix", "-w", dest = "with_prefix", action = "store_true", required = False, \
 						help = "Set when the accession file contains two columns for accessions and prefixes, respectively")
 	parser.add_argument("--db", "-d", dest = "db", type = str, default = "nucleotide", required = False, \
@@ -279,10 +279,13 @@ def check_output_dir(outdir):
 	"""
 	Prepare the output directory
 	"""
-	if not os.path.exists(outdir):
-		os.system("mkdir " + outdir)
+	if outdir != ".":
+		if not os.path.exists(outdir):
+			os.system("mkdir " + outdir)
+		else:
+			print("Output directory " + outdir + " exists.")
 	else:
-		print("Output directory " + outdir + " exists.")
+		print("Skipped checking the output directory as it is the current working directory.")
 	
 	return
 
