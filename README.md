@@ -3,12 +3,12 @@ This directory consists of scripts developed by Yu Wan for routine bioinformatic
 
 ## A list of scripts  
 * [add_sample_name_FASTA.py](#add_sample\_name\_FASTA)  
-* [download_NCBI_records.py](#download\_NCBI\_records)  
-* [extract_nucl_region.py](#extract\_nucl\_region)  
+* [downloadSeqFromNCBI.py](#download\_NCBI\_records)  
+* [extractNuclRegionFromFASTA.py](#extract\_nucl\_region)  
 * [gbk2tbl.py](#gbk2tbl)  
 * [gbk2tsv.py](#gbk2tsv)  
 * [gc.py](#gc)  
-* [get_gene_seq.py](#get\_gene\_seq)  
+* [extractSeqFromGBK.py](#get\_gene\_seq)  
 * [parse_ENA_sampleInfo_XML.py](#parse\_ENA\_sampleInfo\_XML)  
 * [run_CutAdapt.py](#run_CutAdapt)  
 * [filename_generator.py](#filename_generator)  
@@ -20,15 +20,15 @@ This script appends a sample name at the beginning of each sequence in a FASTA f
 Command example: ```python add_sample_name_FASTA.py -i filename.txt (or filename.fna) -o output_dir -n```  
 <br />
 
-### <a name="download_NCBI_records"></a>download_NCBI_records.py
+### <a name="download_NCBI_records"></a>downloadSeqFromNCBI.py
 This script takes as input a list of NCBI accession numbers (one for each line) from the STDIN and downloads corresponding entries (either GenBank files or FASTA files) under the target directory.  
 
 **Examples**  
 
 ```shell
-python download\_NCBI\_records.py --records "file:objects.txt" --format fasta --email xxx@xxx.com --suffix fna --outdir ./ref --skip > download.log  
+python downloadSeqFromNCBI.py --records "file:objects.txt" --format fasta --email xxx@xxx.com --suffix fna --outdir ./ref --skip > download.log  
 
-python download\_NCBI\_records.py --records "NC_0001,NC_0002" --format genbank --email xxx@xxx.com --suffix gbk --outdir ./ref --skip > download.log 
+python downloadSeqFromNCBI.py --records "NC_0001,NC_0002" --format genbank --email xxx@xxx.com --suffix gbk --outdir ./ref --skip > download.log 
 ```
 
 Type ```python download_NCBI_records.py -h``` or ```--help``` for help information.  
@@ -50,7 +50,7 @@ An example of the input list: seq_list.txt. Note that accession IDs may not incl
 
 <br />
 
-### <a name="extract_nucl_region"></a>extract\_nucl\_region.py
+### <a name="extract_nucl_region"></a>extractNuclRegionFromFASTA.py
 This script extracts a region of nucleotides by positions from a fasta file.  
 
 **Arguments**  
@@ -130,14 +130,14 @@ Treatment of the extended alphabet in this script:
 4. counts for A, G, C and T is computed by adding up the vectors for every character read from the sequence.  
 <br />
 
-### <a name="get_gene_seq"></a>get_gene_seq.py
+### <a name="get_gene_seq"></a>extractSeqFromGBK.py
 This script extracts gene sequences from a GenBank file, in accordance with a list of (locus_tag, feature type) tuples.  
 
 Required module: Bio, argparse, csv  
 
 **Usage**
 ```bash
-python get_gene_seq.py --tags locus_tag.tsv --gb demo.gbk > genes.fna
+python extractSeqFromGBK.py --tags locus_tag.tsv --gb demo.gbk > genes.fna
 ```
 
 **Inputs**  

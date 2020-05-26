@@ -3,11 +3,11 @@
 """
 This script takes a list of NCBI accession numbers (one for each line) from the STDIN and downloads corresponding entries (either GenBank files or FASTA files) under the target directory.
 
-Usage: python download_NCBI_records.py --records "file:objects.txt" --with_prefix --format fasta --email xxx@xxx.com --ext fna --outdir ./ref --skip > download.log
-	   python download_NCBI_records.py --records "NC_0001,NC_0002" --format genbank --email xxx@xxx.com --ext gbk --outdir ./ref --skip > download.log
-	   python download_NCBI_records.py --records "NC_0001,NC_0002" --format genbank --email xxx@xxx.com --prefix K12 --ext gbk --outdir ./ref --skip > download.log
-	   python download_NCBI_records.py --records "file:objects.tsv" --with_prefix --format fasta --email xxx@xxx.com --ext fna --outdir ./ref --skip > download.log
-	   Type python download_NCBI_records.py -h or --help for help information.
+Usage: python downloadSeqFromNCBI.py --records "file:objects.txt" --with_prefix --format fasta --email xxx@xxx.com --ext fna --outdir ./ref --skip > download.log
+	   python downloadSeqFromNCBI.py --records "NC_0001,NC_0002" --format genbank --email xxx@xxx.com --ext gbk --outdir ./ref --skip > download.log
+	   python downloadSeqFromNCBI.py --records "NC_0001,NC_0002" --format genbank --email xxx@xxx.com --prefix K12 --ext gbk --outdir ./ref --skip > download.log
+	   python downloadSeqFromNCBI.py --records "file:objects.tsv" --with_prefix --format fasta --email xxx@xxx.com --ext fna --outdir ./ref --skip > download.log
+	   Type python downloadSeqFromNCBI.py -h or --help for help information.
 
 Important options and arguments:
 	--records or -r: Can be either a file (must contain a suffix of ".txt") listing targets to be downloaded, or a string of accession IDs separated by commas (no space is allowed).
@@ -31,11 +31,11 @@ References:
 	2. Forum post: www.biostars.org/p/63506/
 	3. Damien Farrell's blog post: Retrieving genome assemblies via Entrez with Python (dmnfarrell.github.io/bioinformatics/assemblies-genbank-python)
 	
-Author: Yu Wan (wanyuac@126.com, https://github.com/wanyuac)
-First publication: 27 June 2015 - 14 July 2015; the latest modification: 21 April 2020
-Previous name: download_gbk.py
+Copyright (C) 2015-2020 Yu Wan <wanyuac@126.com>
+First publication: 27 June 2015 - 14 July 2015; the latest modification: 26 May 2020
 Python version 2 and 3 compatible
-Licence: GNU GPL 2.1
+Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
+Previous names: download_gbk.py, download_NCBI_records.py
 """
 
 from __future__ import print_function
@@ -67,7 +67,7 @@ def parse_arguments():
 	parser.add_argument("--no_accession", "-n", dest = "no_accession", action = "store_true", required = False, \
 						help = "Set this flag to not attach an NCBI accession number after the genome name in each file name. Only applicable when --prefix != None.")
 	parser.add_argument("--ext", "-x", dest = "ext", type = str, default = "fasta", required = False, \
-						help = "File extension: fasta (default), fna, gb, gbk, fna.gz")
+						help = "File extension: fasta (default), fna, gb, gbk, fna.gz, gbff.gz")
 	parser.add_argument("--outdir", "-o", dest = "outdir", type = str, default = ".", required = False, \
 						help = "Destination directory, no backslash at the end")
 	parser.add_argument("--skip", "-sk", dest = "skip", action = "store_true", required = False, \
@@ -91,25 +91,28 @@ def main():
 	# Iteratively download files
 	if args.db == "nucleotide":
 		"""
-		Download nucleotide records as FASTA files
+		Download nucleotide records (FASTA or GenBank files) through Entrez.efetch utility.
 		"""
 		if args.format == "fasta":
 			download_records(new_files = new_files, skip_existing = args.skip, record_type = "fasta", \
 							 outdir = args.outdir)
 		else:
 			"""
-			Download nucleotide records as GenBank files.
-			Do not use "gb" for rettype, as it only includes contig locations if the entry is built
-			from contigs.
+			Download nucleotide records as GenBank files. Do not use "gb" for rettype, as it only includes
+			contig locations if the entry is built from contigs.
 			"""
 			download_records(new_files = new_files, skip_existing = args.skip, record_type = "gbwithparts", \
 							 outdir = args.outdir)
 	elif args.db == "assembly":
 		"""
-		Download assemblies as FASTA files
+		Download assemblies (FASTA or GenBank files) from NCBI's FTP server.
 		"""
-		download_assemblies(new_files = new_files, skip_existing = args.skip, outdir = args.outdir, \
-							use_refseq = args.refseq, site = args.ftp)
+		if args.format == "fasta":
+			download_assemblies(new_files = new_files, skip_existing = args.skip, outdir = args.outdir, \
+								use_refseq = args.refseq, site = args.ftp, fasta = True)
+		else:
+			download_assemblies(new_files = new_files, skip_existing = args.skip, outdir = args.outdir, \
+								use_refseq = args.refseq, site = args.ftp, fasta = False)
 	else:
 		print("Error: only databases 'nucleotide' and 'assembly' are supported by far. No download task will be launched.")
 
@@ -118,6 +121,7 @@ def main():
 
 def extract_accessions(targets, with_prefix):
 	"""
+	Parsing the argument for '--records'.
 	This function deals with two kinds of input: a string of accession numbers or a file.
 	"""
 	if targets.startswith("file:"):  # treat "targets" as a file name
@@ -140,12 +144,12 @@ def extract_accessions(targets, with_prefix):
 
 def create_output_filenames(accessions, with_prefix, no_accession, outdir, out_prefix, extension):
 	"""
-	Set up file names for download
+	Set up file names for download. Return variable: a dictionary.
 	"""
 	new_files = {}
 	if with_prefix:  # when "accessions" is a dictionary
-		for entry, prefix in accessions.items():
-			if no_accession:
+		for entry, prefix in accessions.items():  # entry: an accession number, the key of the dictionary "accessions"
+			if no_accession:  # Do not attach an accession number after the genome name in the output filename.
 				new_files[entry] = os.path.join(outdir, prefix + extension)
 			else:
 				new_files[entry] = os.path.join(outdir, prefix + "__" + entry + extension)
@@ -164,7 +168,7 @@ def create_output_filenames(accessions, with_prefix, no_accession, outdir, out_p
 
 def download_records(new_files, skip_existing, record_type, outdir):
 	"""
-	Download from the nucleotide database and save files in FASTA or GenBank format
+	Download from the nucleotide database (through Entrez.efetch) and save files in FASTA or GenBank format
 	"""
 	print("Start to download records from the NCBI Nucleotide database.")
 	n = 0  # the counter for downloaded files
@@ -188,12 +192,12 @@ def download_records(new_files, skip_existing, record_type, outdir):
 	return
 
 
-def download_assemblies(new_files, skip_existing, outdir, use_refseq, site):
+def download_assemblies(new_files, skip_existing, outdir, use_refseq, site, fasta):
 	"""
-	Download nucleotide sequences from the NCBI Assembly database
+	Download nucleotide sequences from the NCBI Assembly database through FTP
 	"""
 	print("Start to download records from the NCBI Assembly database.")
-	urls = get_urls(new_files, use_refseq, skip_existing)  # urls is a named tuple with three fields
+	urls = get_urls(new_files, use_refseq, skip_existing, fasta)  # urls is a named tuple with three fields
 	
 	# Download files through FTP
 	print("Connecting to site " + site + ".")
@@ -206,6 +210,7 @@ def download_assemblies(new_files, skip_existing, outdir, use_refseq, site):
 	
 	n = 0
 	prefix_len = len("ftp://" + site)  # For example, len("ftp://ftp.ncbi.nlm.nih.gov") = 26
+	output_format = "FASTA" if fasta else "GenBank"
 	
 	for assembly in urls:
 		try:
@@ -217,7 +222,7 @@ def download_assemblies(new_files, skip_existing, outdir, use_refseq, site):
 				using a simple command: assembly.url[prefix_len : ].
 				"""
 				ftp.retrbinary("RETR " + assembly.url[prefix_len : ], f.write)
-			print("Saved %s as %s." % (assembly.url, assembly.local))
+			print("Saved %s file %s as %s." % (output_format, assembly.url, assembly.local))
 			n += 1
 			time.sleep(1)
 		except:
@@ -229,23 +234,14 @@ def download_assemblies(new_files, skip_existing, outdir, use_refseq, site):
 	return
 
 
-def get_assembly_summary(seq_id):
-	"""
-	Retrieve details of an assembly under a given ID (the parameter 'id')
-	This is a subordinate function of download_assemblies.
-	"""
-	handle = Entrez.esummary(db = "assembly", id = seq_id, report = "full")
-	record = Entrez.read(handle)
-	
-	return record
-
-
-def get_urls(new_files, use_refseq, skip_existing):
+def get_urls(new_files, use_refseq, skip_existing, fasta):
 	"""
 	Retrieve FTP addresses of assembly files on NCBI's server.
 	"""
 	Assembly = namedtuple("Assembly", ["accession", "url", "local"])
 	urls = []
+	filename_suffix = "_genomic.fna.gz" if fasta else "_genomic.gbff.gz"  # FASTA or GenBank file
+
 	for entry, new_file in new_files.items():
 		if os.path.exists(new_file) and skip_existing:
 			print(new_file + " already exists, skipped.")
@@ -265,7 +261,7 @@ def get_urls(new_files, use_refseq, skip_existing):
 				continue
 			else:
 				urls.append(Assembly(accession = entry, \
-									 url = os.path.join(url, os.path.basename(url) + "_genomic.fna.gz"), \
+									 url = os.path.join(url, os.path.basename(url) + filename_suffix), \
 									 local = new_file))
 		except:
 			print("The record "+ entry + " is not found.")
@@ -273,6 +269,17 @@ def get_urls(new_files, use_refseq, skip_existing):
 		time.sleep(1)
 		
 	return urls
+
+
+def get_assembly_summary(seq_id):
+	"""
+	Retrieve details of an assembly under a given ID (the parameter 'id')
+	This is a subordinate function of get_urls.
+	"""
+	handle = Entrez.esummary(db = "assembly", id = seq_id, report = "full")
+	record = Entrez.read(handle)
+	
+	return record
 
 
 def check_output_dir(outdir):

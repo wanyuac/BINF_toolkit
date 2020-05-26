@@ -99,12 +99,13 @@ def main():
 	search_key = "gene" if args.usegene else "locus_tag"
 
 	for gbk in args.gbk:
-		process_gbk(gbk = gbk, tags = tags, search_key = search_key, usegene = args.usegene, get_protein = args.aa, att_name = args.extname)
+		process_gbk(gbk = gbk, tags = tags, search_key = search_key, usegene = args.usegene, get_protein = args.aa,\
+			att_name = args.extname, tag_num = len(tags))
 	
 	return
 
 
-def process_gbk(gbk, tags, search_key, usegene, get_protein, att_name):
+def process_gbk(gbk, tags, search_key, usegene, get_protein, att_name, tag_num):
 	"""
 	This function processes a single GenBank file.
 	"""
@@ -114,64 +115,83 @@ def process_gbk(gbk, tags, search_key, usegene, get_protein, att_name):
 		sys.exit(0)
 	targets = list(tags.keys())  # Names of targets. For instance, a list of gene names or locus tags.
 	g = os.path.splitext(os.path.basename(gbk))[0]  # Remove path and filename extension from the path of the input GenBank file.
+	loci_found = 0  # Number of target loci encountered in this GenBank file. This variable is useful when usegene = False.
+	continue_search = True
 
 	for contig in SeqIO.parse(gbk, "genbank"):
 		"""
 		Do not use list(SeqIO.parse(gbk, "genbank")) in order to save memory.
 		Object 'contig' belongs to class SeqRecord and corresponds to a LOCUS feature in the GenBank file.
-		The following loop goes through every feature of the contig.
+		A GenBank file may be comprised of multiple contigs. The following loop goes through every feature of the contig.
 		"""
-		for f in contig.features:  # Features can be 'source', 'gene', 'CDS', etc.
-			if f.type in target_feature_types:  # Skipping unwanted feature types saves time.
-				f_qualifier_keys = list(f.qualifiers.keys())
-				if search_key in f_qualifier_keys:  # type(f.qualifiers): collections.OrderedDict
-					tag_name = f.qualifiers[search_key][0]  # Equals gene name when search_key is 'gene' or locus tag when search_key is 'locus_tag'.
-					if tag_name in targets and f.type == tags[tag_name]: # If the true feature type matches the anticipated type, then it is a true discovery.
-						strand = "+" if f.strand == 1 else "-"
-						start = int(f.location.start) + 1  # An alias for f.location.nofuzzy_start. Conventional start position is 1 bp greater than the Python-style coordinate.
-						end = int(f.location.end)  # An alias for f.location.nofuzzy_end
+		if continue_search:
+			"""
+			Go through features of the current contig.
+			The features can be 'source', 'gene', 'CDS', etc.
+			"""
+			for f in contig.features:
+				if f.type in target_feature_types:  # Skipping unwanted feature types saves time.
+					f_qualifier_keys = list(f.qualifiers.keys())
+					if search_key in f_qualifier_keys:  # type(f.qualifiers): collections.OrderedDict
+						tag_name = f.qualifiers[search_key][0]  # Equals gene name when search_key is 'gene' or locus tag when search_key is 'locus_tag'.
+						if tag_name in targets and f.type == tags[tag_name]: # If the true feature type matches the anticipated type, then it is a true discovery.
+							strand = "+" if f.strand == 1 else "-"
+							start = int(f.location.start) + 1  # An alias for f.location.nofuzzy_start. Conventional start position is 1 bp greater than the Python-style coordinate.
+							end = int(f.location.end)  # An alias for f.location.nofuzzy_end
 
-						# Get the sequence
-						if get_protein:
-							seq = f.qualifiers["translation"][0]  # Type: str
-						else:
-							seq = str(f.extract(contig.seq))
+							# Get the sequence
+							if get_protein:
+								seq = f.qualifiers["translation"][0]  # Type: str
+							else:
+								seq = str(f.extract(contig.seq))
 
-						# Determine the output sequence ID
-						if att_name:
-							seq_id = "%s.%s" % (tag_name, g)
-						else:
-							seq_id = tag_name
-						
-						# Determine the gene name where available
-						if "gene" in f_qualifier_keys:
-							gene_name = f.qualifiers["gene"][0]
-						else:
-							gene_name = "NA"
+							# Determine the output sequence ID
+							if att_name:
+								seq_id = "%s.%s" % (tag_name, g)
+							else:
+								seq_id = tag_name
+							
+							# Determine the gene name where available
+							if "gene" in f_qualifier_keys:
+								gene_name = f.qualifiers["gene"][0]
+							else:
+								gene_name = "NA"
 
-						# Determine protein accession number when available
-						if f.type == "CDS" and "protein_id" in f_qualifier_keys:
-							protein_accession = f.qualifiers["protein_id"]
-						else:
-							protein_accession = "NA"
+							# Determine protein accession number when available
+							if f.type == "CDS" and "protein_id" in f_qualifier_keys:
+								protein_accession = f.qualifiers["protein_id"][0]
+							else:
+								protein_accession = "NA"
 
-						# Get the locus tag
-						if usegene and "locus_tag" in f_qualifier_keys:
-							locus_tag = f.qualifiers['locus_tag'][0]
-						else:
-							locus_tag = tag_name
+							# Get the locus tag
+							if usegene and "locus_tag" in f_qualifier_keys:
+								locus_tag = f.qualifiers['locus_tag'][0]
+							else:
+								locus_tag = tag_name
 
-						# Get the product name
-						if "product" in f_qualifier_keys:
-							product = f.qualifiers["product"][0]
-						else:
-							product = "NA"
-						
-						# Print the target sequence
-						print(">%s %s|%s|%s|%s|%i-%i|+|%s|%s|%s" % (seq_id, gene_name, g, contig.id, strand, start, end, locus_tag,\
-							protein_accession, product))  # print the header
-						print(seq)  # extract nucleotide sequence of this feature
-	
+							# Get the product name
+							if "product" in f_qualifier_keys:
+								product = f.qualifiers["product"][0]
+							else:
+								product = "NA"
+							
+							# Print the target sequence
+							print(">%s %s|%s|%s|%s|%i-%i|+|%s|%s|%s" % (seq_id, gene_name, g, contig.id, strand, start, end, locus_tag,\
+								protein_accession, product))  # print the header
+							print(seq)  # extract nucleotide sequence of this feature
+
+							"""
+							In order to save time, the for loop is terminated when locus tags (which are unique in every GenBank file)
+							are used as search keys and all target locus tags have been found.
+							"""
+							if not usegene:
+								loci_found += 1
+								if loci_found == tag_num:  # Do not need to do further search.
+									continue_search = False  # To break the outer for loop
+									break  # Terminate the current for loop
+		else:
+			break  # This termination happens when usegene = False and all target locus tags have been found.
+
 	return
 
 
