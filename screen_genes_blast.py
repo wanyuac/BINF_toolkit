@@ -33,7 +33,7 @@ import sys, os, subprocess
 def parse_arguments():
     # read arguments of options
     parser = ArgumentParser(description="Fix problems in SRST2's ARG-Annot database")
-    parser.add_argument("--in", "-i", dest = "input", nargs='+', type = str, required = True, default = "", help = "A list of input FASTA files")
+    parser.add_argument("--in", "-i", dest = "input", nargs = "+", type = str, required = True, default = "", help = "A list of input FASTA files")
     parser.add_argument("--db", "-d", dest = "db", type = str, required = True, default = "", help="A reference nucleotide database for BLAST")
     parser.add_argument("--strains", "-s", dest = "strains", type = str, required = False, default = "", help = "(optional) Comma-delimited names of bacterial strains")
     parser.add_argument("--genomes", "-g", dest = "genomes", type = str, required = False, default = "", help = "(optional) Comma-delimited genome names")

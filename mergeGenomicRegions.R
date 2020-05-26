@@ -94,8 +94,8 @@ y <- mergeRegions(x)
 z <- findComplementaryRegions(y, genome.len)
 
 # write results
-write.table(y, file = paste0(prefix, "__merged.csv"), col.names = FALSE, row.names = FALSE, quote = FALSE, sep = ",")
-write.table(z, file = paste0(prefix, "__comple.csv"), col.names = FALSE, row.names = FALSE, quote = FALSE, sep = ",")
+write.table(y, file = paste0(prefix, "__merged.csv"), col.names = FALSE, row.names = FALSE, quote = FALSE, sep = ",")  # Merged regions
+write.table(z, file = paste0(prefix, "__comple.csv"), col.names = FALSE, row.names = FALSE, quote = FALSE, sep = ",")  # Complementary regions
 
 # sumamrise regions
 y$base <- y$to - y$from + 1

@@ -1,11 +1,5 @@
 """
-This script extracts a region of nucleotides by positions from a fasta file
-Author: Yu Wan (wanyuac@126.com)
-Date: 1 June and 17 July 2015
-GitHub: https://github.com/wanyuac/BINF_toolkit
-Licence: GNU GENERAL PUBLIC LICENSE Version 2
-
-Previous name: extract_nc_region.py
+This script extracts a region of nucleotides by its genomic coordinates from a fasta file
 
 Arguments
 	-i: the path of the input file
@@ -18,6 +12,12 @@ Arguments
 Requirements
 	Only one region should be selected
 	The start and end positions should not spill out
+    
+Author: Yu Wan (wanyuac@126.com)
+Date: 1 June and 17 July 2015
+GitHub: https://github.com/wanyuac/BINF_toolkit
+Licence: GNU GENERAL PUBLIC LICENSE Version 2
+Previous name: extract_nc_region.py, extract_nucl_region.py
 """
 
 from argparse import ArgumentParser
