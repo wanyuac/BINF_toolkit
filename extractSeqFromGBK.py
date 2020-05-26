@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#!/usr/bin/env python
 
 """
 This script extracts nucleotide or protein sequences from a GenBank file in accordance with a list of
