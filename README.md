@@ -31,7 +31,7 @@ python downloadSeqFromNCBI.py --records "file:objects.txt" --format fasta --emai
 python downloadSeqFromNCBI.py --records "NC_0001,NC_0002" --format genbank --email xxx@xxx.com --suffix gbk --outdir ./ref --skip > download.log 
 ```
 
-Type ```python download_NCBI_records.py -h``` or ```--help``` for help information.  
+Type ```python downloadSeqFromNCBI.py -h``` or ```--help``` for help information.  
 
 **Notes about options and option arguments**  
 * --records: can be either a file (must contain a suffix of ".txt") listing targets to be downloaded, or a string of accession IDs separated by commas (no space is allowed).  

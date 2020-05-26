@@ -99,6 +99,7 @@ def main():
 	search_key = "gene" if args.usegene else "locus_tag"
 
 	for gbk in args.gbk:
+		print("Processing %s" % gbk, file = sys.stderr)
 		process_gbk(gbk = gbk, tags = tags, search_key = search_key, usegene = args.usegene, get_protein = args.aa,\
 			att_name = args.extname, tag_num = len(tags))
 	
@@ -124,11 +125,7 @@ def process_gbk(gbk, tags, search_key, usegene, get_protein, att_name, tag_num):
 		Object 'contig' belongs to class SeqRecord and corresponds to a LOCUS feature in the GenBank file.
 		A GenBank file may be comprised of multiple contigs. The following loop goes through every feature of the contig.
 		"""
-		if continue_search:
-			"""
-			Go through features of the current contig.
-			The features can be 'source', 'gene', 'CDS', etc.
-			"""
+		if continue_search:  # Go through features of the current contig.
 			for f in contig.features:
 				if f.type in target_feature_types:  # Skipping unwanted feature types saves time.
 					f_qualifier_keys = list(f.qualifiers.keys())
@@ -140,8 +137,13 @@ def process_gbk(gbk, tags, search_key, usegene, get_protein, att_name, tag_num):
 							end = int(f.location.end)  # An alias for f.location.nofuzzy_end
 
 							# Get the sequence
-							if get_protein:
-								seq = f.qualifiers["translation"][0]  # Type: str
+							if get_protein and f.type == "CDS":
+								if "translation" in f_qualifier_keys:
+									seq = f.qualifiers["translation"][0]  # Type: str
+								else:  # It happens when the CDS is a pseudo gene.
+									print("Warning: CDS of feature %s in %s does not have a translated sequence." % (tag_name, gbk),\
+										file = sys.stderr)
+									continue  # Skip the current feature and move to the next one.
 							else:
 								seq = str(f.extract(contig.seq))
 
