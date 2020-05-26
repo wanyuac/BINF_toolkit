@@ -14,7 +14,7 @@ Usage:
 Inputs
     1. --gbk: A list of GenBank files. Each filename is a genome name, which will be parsed and put into output sequence headers.
     2. --targets:
-	    (1) A tab-delimited text file (.tsv) listing selected locus_tags/gene names in the format: [tag]'\t'[feature_type].
+        (1) A tab-delimited text file (.tsv) listing selected locus_tags/gene names in the format: [tag]'\t'[feature_type].
         (2) Single-target mode: an ID, preceded by a '^' sign and followed by a feature type with a colon as the delimiter. For example, 'repB,CDS'.
 	
     Allowed feature types are: CDS, tRNA, rRNA, tmRNA.
