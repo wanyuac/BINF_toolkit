@@ -7,48 +7,49 @@ This script extracts nucleotide or protein sequences from a GenBank file in acco
 Required modules: Python 3, BioPython, argparse, csv.
 
 Usage:
-	python extractSeqFromGBK.py --targets [target file] --gbk [GenBank file(s)] > [output file name]
-	python extractSeqFromGBK.py --targets [target file] --usegene --gbk [GenBank file(s)] > [output file name]
+    python extractSeqFromGBK.py --targets [target file] --gbk [GenBank file(s)] > [output file name]
+    python extractSeqFromGBK.py --targets [target file] --gbk [GenBank file(s)] --usegene > [output file name]
+    python extractSeqFromGBK.py --targets [target file] --gbk [GenBank file(s)] --usegene --aa --extname > [output file name]
 
 Inputs
-	1. --gbk: A list of GenBank files. Each filename is a genome name, which will be parsed and put into output sequence headers.
-	2. --targets:
+    1. --gbk: A list of GenBank files. Each filename is a genome name, which will be parsed and put into output sequence headers.
+    2. --targets:
 	    (1) A tab-delimited text file (.tsv) listing selected locus_tags/gene names in the format: [tag]'\t'[feature_type].
-		(2) Single-target mode: an ID, preceded by a '^' sign and followed by a feature type with a colon as the delimiter. For example, 'repB,CDS'.
+        (2) Single-target mode: an ID, preceded by a '^' sign and followed by a feature type with a colon as the delimiter. For example, 'repB,CDS'.
 	
-	Allowed feature types are: CDS, tRNA, rRNA, tmRNA.
-		For example
-			SMDB11_RS00910	rRNA
-			SMDB11_RS21915	rRNA
-			SMDB11_RS00015	CDS
-		Or:
-			gene1	CDS
-			gene2	CDS
-			gene3	CDS
+    Allowed feature types are: CDS, tRNA, rRNA, tmRNA.
+        For example
+            SMDB11_RS00910	rRNA
+            SMDB11_RS21915	rRNA
+            SMDB11_RS00015	CDS
+        Or:
+            gene1	CDS
+            gene2	CDS
+            gene3	CDS
 
 Output (to stdout)
-	Nucleotide sequences in FASTA format with the header in the format:
-		>[sequence ID] [gene name]|[Genome name]|[NCBI nucleotide accession or contig name]|[Coding strand (+/-)]|[Coordinates]|[Coordinate strand (+/-)]|[Locus tag]|[NCBI protein accession/NA]|[Product name]
+    Nucleotide sequences in FASTA format with the header in the format:
+        >[sequence ID] [gene name]|[Genome name]|[NCBI nucleotide accession or contig name]|[Coding strand (+/-)]|[Coordinates]|[Coordinate strand (+/-)]|[Locus tag]|[NCBI protein accession/NA]|[Product name]
 
 Example commands
-	python extractSeqFromGBK.py --targets loci.tsv --gbk genome1.gb > genome1_genes.fna
-	python extractSeqFromGBK.py --targets ^geneA:CDS --gbk *.gbk --usegene > genes.fna
-	python extractSeqFromGBK.py --targets genes.tsv --gbk *.gbk --usegene --aa --extname > proteins.faa
+    python extractSeqFromGBK.py --targets loci.tsv --gbk genome1.gb > genome1_genes.fna
+    python extractSeqFromGBK.py --targets ^geneA:CDS --gbk *.gbk --usegene > genes.fna
+    python extractSeqFromGBK.py --targets genes.tsv --gbk *.gbk --usegene --aa --extname > proteins.faa
 
 Notes
     1. Locus tags are recommended when users want to extract sequences of exact features, since some features in a record
-	may share the same gene name. (Check GenBank files before using this script). Nonetheless, users may want to use gene
-	names rather than locus tags to include sequences of the same gene name.
-	2. Multiple sequences of any target that is shared by different loci will be extracted. For example, two sequences are
-	printed for a gene when both sequences share the same gene name.
-	3. Note that some features, such as 'source', does not contain a qualifier "locus_tag". A KeyError will arise if call
-	qualifiers["locus_tag"] for those features. Moreover, the 'gene' feature, although it shares the same locus_tag with
-	its CDS, it does not contain a nucleotide sequence and hence should not be used as a legit type of target features.
-	4. Coordinate strand (+/-) always equals '+' when the GenBank file is created by Prokka or NCBI's Prokaryotic Genome
-	Annotation Pipeline (PGAP). This scripts presumes that this is the case.
+    may share the same gene name. (Check GenBank files before using this script). Nonetheless, users may want to use gene
+    names rather than locus tags to include sequences of the same gene name.
+    2. Multiple sequences of any target that is shared by different loci will be extracted. For example, two sequences are
+    printed for a gene when both sequences share the same gene name.
+    3. Note that some features, such as 'source', does not contain a qualifier "locus_tag". A KeyError will arise if call
+    qualifiers["locus_tag"] for those features. Moreover, the 'gene' feature, although it shares the same locus_tag with
+    its CDS, it does not contain a nucleotide sequence and hence should not be used as a legit type of target features.
+    4. Coordinate strand (+/-) always equals '+' when the GenBank file is created by Prokka or NCBI's Prokaryotic Genome
+    Annotation Pipeline (PGAP). This scripts presumes that this is the case.
 
 Explanation of warning(s)
-	An "IndexError: list index out of range" will arise if the tag list uses Unicode codes.
+    An "IndexError: list index out of range" will arise if the tag list uses Unicode codes.
 	
 Copyright (C) Yu Wan 2020 <wanyuac@126.com>
 Publication: 19 June 2015; latest update: 26 May 2020
@@ -56,8 +57,8 @@ Licence: GNU General Public License v3.0
 Previous filename: get_gene_seq.py
 
 References
-	Mark Schultz, https://github.com/schultzm/parseGenbank_extractGenes.py
-	martineau, http://stackoverflow.com/questions/14734604/python-dictionary-of-lists-from-tab-delimited-file
+    Mark Schultz, https://github.com/schultzm/parseGenbank_extractGenes.py
+    martineau, http://stackoverflow.com/questions/14734604/python-dictionary-of-lists-from-tab-delimited-file
 """
 
 from Bio import SeqIO
@@ -68,7 +69,6 @@ from argparse import ArgumentParser
 
 
 def parse_args():
-	# Extract arguments from the command line
 	parser = ArgumentParser(description= "Extract nucleotide/protein sequences from GenBank files")
 	parser.add_argument("--targets", "-t", dest = "targets", type = str, required = True, help = "A tab-delimited file listing (locus_tag/gene name, feature type) tuples, or ^tag:type")
 	parser.add_argument("--gbk", "-g", dest = "gbk", nargs = "+", type = str, required = True, help = "One or multiple GenBank files")
