@@ -1,15 +1,19 @@
 #!/usr/bin/env python
 
 """
-This script extracts sequences from a multi-FASTA file using sequence IDs, which are defined in sequence headers.
+This script extracts sequences from a multi-FASTA file using sequence IDs, which are defined in sequence headers. It
+basically filters contigs from a multi-FASTA file based on sequence IDs.
 
-Input: a multi-FASTA file from stdin. It can be a gene-feature file (.ffn) downloaded from the NCBI nucleotide database.
+Input: a multi-FASTA file from stdin. It can be a gene-feature file (.ffn) downloaded from the NCBI nucleotide database
+or an assembly file comprised of several contig sequences.
+
 Argument: a comma-delimited string of target sequence IDs.
 
 Usage:
     cat input.fna | python extractSeqFromMultiFASTA.py "gene1,gene2,...,geneN" > output.fna
+    cat input.fna | python extractSeqFromMultiFASTA.py "contig1,contig2,...,contigM" > output.fna
     Or,
-    targets=$(cat genes.txt)  # genes.txt contains a single comma-delimited line.
+    targets=$(cat seqIDs.txt)  # seqIDs.txt contains a single comma-delimited line.
     cat input.fna | python extractSeqFromMultiFASTA.py $targets > output.fna
 
 Author: Yu Wan (wanyuac@126.com, https://github.com/wanyuac)
