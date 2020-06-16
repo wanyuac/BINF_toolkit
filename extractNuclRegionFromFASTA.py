@@ -56,6 +56,10 @@ def main():
 	f = open(args.i, "rU")  # supports universal newlines
 	contigs = list(SeqIO.parse(f, "fasta"))
 	found = False
+	
+	"""
+	To-do: what happens when start > end?
+	"""
 	if args.c == "":
 		found = write_seq(contig=contigs[0], feature=args.f, start=args.s, end=args.e, output=args.o)  # read the first contig if -n is not set
 	else:
