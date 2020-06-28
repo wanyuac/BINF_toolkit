@@ -32,7 +32,7 @@ References:
 	3. Damien Farrell's blog post: Retrieving genome assemblies via Entrez with Python (dmnfarrell.github.io/bioinformatics/assemblies-genbank-python)
 	
 Copyright (C) 2015-2020 Yu Wan <wanyuac@126.com>
-First publication: 27 June 2015 - 14 July 2015; the latest modification: 26 May 2020
+First publication: 27 June 2015 - 14 July 2015; the latest modification: 28 June 2020
 Python version 2 and 3 compatible
 Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
 Previous names: download_gbk.py, download_NCBI_records.py
@@ -42,6 +42,7 @@ from __future__ import print_function
 import os
 import sys
 import time
+import xml.etree.ElementTree as xmlTree
 from Bio import Entrez
 from ftplib import FTP
 from collections import namedtuple
@@ -187,6 +188,9 @@ def download_records(new_files, skip_existing, record_type, outdir):
 			print("The record "+ entry + " is not found.")
 			continue
 		time.sleep(1) # Pause for one second to obviate submitting too many concurrent requests to NCBI
+
+	if outdir == ".":
+		outdir = "the current workding directory"
 	print("Done. Altogether %d files were downloaded and stored in %s successfully." % (n, outdir))
 	
 	return
@@ -206,7 +210,7 @@ def download_assemblies(new_files, skip_existing, outdir, use_refseq, site, fast
 		ftp.login()  # '230 Anonymous access granted, restrictions apply'
 		print("Successfully logged in.")
 	except:
-		sys.exit("Error: cannot log in to the site.")
+		sys.exit("Error: could not log in to the site.")
 	
 	n = 0
 	prefix_len = len("ftp://" + site)  # For example, len("ftp://ftp.ncbi.nlm.nih.gov") = 26
@@ -217,8 +221,8 @@ def download_assemblies(new_files, skip_existing, outdir, use_refseq, site, fast
 			with open(assembly.local, "wb") as f: # Create a binary file
 				"""
 				The retrbinary method of an FTP object does not work for the full FTP address, such as
-				ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/.../file.fna.gz. It only accepts the path
-				/genomes/all/GCA/000/.../file.fna.gz. Hence we need to extract the path from an URL
+				ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/.../file.fna.gz. It only accepts an relative path
+				such as /genomes/all/GCA/000/.../file.fna.gz. Hence we need to extract the path from an URL
 				using a simple command: assembly.url[prefix_len : ].
 				"""
 				ftp.retrbinary("RETR " + assembly.url[prefix_len : ], f.write)
@@ -236,7 +240,8 @@ def download_assemblies(new_files, skip_existing, outdir, use_refseq, site, fast
 
 def get_urls(new_files, use_refseq, skip_existing, fasta):
 	"""
-	Retrieve FTP addresses of assembly files on NCBI's server.
+	This is a subordinate function of function download_assemblies. It retrieves FTP addresses of
+	assembly files on the NCBI server. Sequence files are downloaded after gathering all addresses.
 	"""
 	Assembly = namedtuple("Assembly", ["accession", "url", "local"])
 	urls = []
@@ -246,40 +251,85 @@ def get_urls(new_files, use_refseq, skip_existing, fasta):
 		if os.path.exists(new_file) and skip_existing:
 			print(new_file + " already exists, skipped.")
 			continue  # go to the next entry
+
 		try:
 			handle = Entrez.esearch(db = "assembly", term = entry, retmax = "1")  # There is only one record per accession number.
 			record = Entrez.read(handle)
-			seq_id = record["IdList"][0]  # Convert this single-element list into a string
-			summary = get_assembly_summary(seq_id)
+			uid = record["IdList"][0]  # Convert this single-element list into a string
+		except:
+			print("The record "+ entry + " was not found in the database.")
+			continue
+
+		summary = get_assembly_summary(uid)
+		if summary != None:
 			if use_refseq:
-				url = summary["DocumentSummarySet"]["DocumentSummary"][0]["FtpPath_RefSeq"]
+				url = summary["FtpPath_RefSeq"]  # Field <FtpPath_RefSeq> in the summary XML file
 			else:
-				url = summary["DocumentSummarySet"]["DocumentSummary"][0]["FtpPath_GenBank"]
-			
+				url = summary["FtpPath_GenBank"]  # Field <FtpPath_GenBank> in the summary XML file
+				
 			if url == "":
-				print("Warning: URL of %s (sequence ID: %s) is not found." % (entry, seq_id))
+				print("Warning: URL of assembly %s (sequence ID: %s) was not found in the record summary." % (entry, uid))
 				continue
 			else:
-				urls.append(Assembly(accession = entry, \
-									 url = os.path.join(url, os.path.basename(url) + filename_suffix), \
-									 local = new_file))
-		except:
-			print("The record "+ entry + " is not found.")
-			continue
+				urls.append(Assembly(accession = entry, url = os.path.join(url, os.path.basename(url) + filename_suffix),\
+					local = new_file))
+
 		time.sleep(1)
 		
 	return urls
 
 
-def get_assembly_summary(seq_id):
+def get_assembly_summary(uid):
 	"""
 	Retrieve details of an assembly under a given ID (the parameter 'id')
-	This is a subordinate function of get_urls.
+	This is a subordinate function of get_urls and it returns either a dictionary or a None object.
+
+	The follow command is equivalent to visiting the URL:
+	https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=assembly&id=uid" in a web browser.
+	The command returns a document summary in the format of DocSums for uid.
+	(Reference: https://www.ncbi.nlm.nih.gov/books/NBK25499/)
 	"""
-	handle = Entrez.esummary(db = "assembly", id = seq_id, report = "full")
-	record = Entrez.read(handle)
+	summary_handle = Entrez.esummary(db = "assembly", id = uid, report = "full", retmax = 1, retmode = "xml")
+	try:
+		summary = Entrez.read(summary_handle)
+		summary = summary["DocumentSummarySet"]["DocumentSummary"][0]  # Returns a dictionary
+	except (ValueError, TypeError):
+		"""
+		A note created on 28 June 2020: The Entrez.read method seems not working recently and returns an internal
+		exception "ValidationError". "Bio.Entrez.Parser.ValidationError: Failed to find tag 'AssemblyStatusSort'
+		in the DTD. To skip all tags that are not represented in the DTD, please call Bio.Entrez.read or
+		Bio.Entrez.parse with validate=False."
+		
+		I do not know the reason but have managed to find out an alternation to this
+		method through directly parsing the summary XML file from the NCBI server. This solution requires model xml.
+		"""
+		print("Document summary could not be parsed for assembly %s. Trying an alternative approach to extract the FTP address..." % uid)
+		try:
+			# The handle need to be regenerated as it seems to be damaged by the method Entrez.read.
+			summary_handle = Entrez.esummary(db = "assembly", id = uid, report = "full", retmax = 1, retmode = "xml")
+			xml = xmlTree.parse(summary_handle).getroot()
+			summary = {}
+
+			"""
+			Structure of the object xml:
+				xml[0]: <DocumentSummarySet>
+					xml[0][0]: <DbBuild>
+					xml[0][1]: <DocumentSummary uid=...>
+			"""
+			for field in xml[0][1]:
+				if field.tag in ["FtpPath_GenBank", "FtpPath_RefSeq"]:
+					summary[field.tag] = field.text
+			
+			if len(summary) > 0:
+				print("    FTP address(es) has/have been successfully extracted for assembly %s." % uid)
+			else:
+				print("    FTP address still could not be obtained for assembly %s." % uid)
+				summary = None
+		except (ValueError, TypeError):  # The worst scenario: no FTP path is found
+			print("    FTP address still could not be obtained for assembly %s." % uid)
+			summary = None
 	
-	return record
+	return summary
 
 
 def check_output_dir(outdir):
