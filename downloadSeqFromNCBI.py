@@ -15,7 +15,7 @@ Important options and arguments:
 	--no_accession: Set this flag to not attach an NCBI accession number after the genome name in each file name. Only applicable when --prefix != None. This option may cause overwriting output files when multiple NCBI accessions share the same prefix.
 	--format or -f: The format of files to be downloaded. This option is not used when --db = assembly.
 	--db: Customised specification of an NCBI database to retrieve records from
-	--ext or -x: The file extension, can be "fasta" (default), "fna", "gb", or "gbk". No dot preceding the extension is needed.
+	--ext or -x: The file extension, can be "fasta" (default), "fna", "fna.gz", "gb", "gb.gz" or "gbk". No dot preceding the extension is needed.
 	--outdir or -o: Output directory, no backslash at the end.
 
 An example of the input list: seq_list.txt. Note that accession IDs may not include version numbers, such as ".1".
@@ -68,7 +68,7 @@ def parse_arguments():
 	parser.add_argument("--no_accession", "-n", dest = "no_accession", action = "store_true", required = False, \
 						help = "Set this flag to not attach an NCBI accession number after the genome name in each file name. Only applicable when --prefix != None.")
 	parser.add_argument("--ext", "-x", dest = "ext", type = str, default = "fasta", required = False, \
-						help = "File extension: fasta (default), fna, gb, gbk, fna.gz, gbff.gz")
+						help = "File extension: fasta (default), fna, gb, gbk, fna.gz, gbff.gz (For assemblies, usually with .gz)")
 	parser.add_argument("--outdir", "-o", dest = "outdir", type = str, default = ".", required = False, \
 						help = "Destination directory, no backslash at the end")
 	parser.add_argument("--skip", "-sk", dest = "skip", action = "store_true", required = False, \
