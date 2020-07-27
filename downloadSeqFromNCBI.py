@@ -291,7 +291,7 @@ def get_assembly_summary(uid):
 	"""
 	summary_handle = Entrez.esummary(db = "assembly", id = uid, report = "full", retmax = 1, retmode = "xml")
 	try:
-		summary = Entrez.read(summary_handle)
+		summary = Entrez.read(summary_handle)  # Not working anymore
 		summary = summary["DocumentSummarySet"]["DocumentSummary"][0]  # Returns a dictionary
 	except (ValueError, TypeError):
 		"""
