@@ -24,7 +24,7 @@ while read line; do
     # # https://unix.stackexchange.com/questions/410710/splitting-a-line-into-array-in-bash-with-tab-as-delimiter
     
     IFS=$'\t' read -r -a names <<< "$line"
-    echo -e "Change ${names[0]} into ${names[1]}."
+    echo -e "Change or move: ${names[0]} --> ${names[1]}."
     mv ${names[0]} ${names[1]}
 done < "$1"  # expect a file name as an input
 
