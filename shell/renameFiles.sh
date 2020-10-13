@@ -7,7 +7,7 @@
 display_usage() {
     echo "
     Usage:
-        Rename files according to a two-column TSV file: [old filename]\t[new filename]
+        Rename or move files according to a two-column TSV file: [old filename]\t[new filename]
         Example command: renameFiles.sh names.tsv
     "
 }
