@@ -10,8 +10,8 @@ display_usage(){
     For example, for genomes g1, g2, and g3, subdirectories g1/, g2/, and g3/ have been created under a
     parental directory assemblies/.
     
-    Command line: sh saveSPAdesAssemblies.sh [parental directory]
-    Example command line: sh saveSPAdesAssemblies.sh \$PWD
+    Command line: sh saveSPAdesOutputs.sh [parental directory]
+    Example command line: sh saveSPAdesOutputs.sh \$PWD
 
     Output: essential assembly files will be copied from subdirectories to the parental directory and be renamed
     by subdirectory names (genome names). Then users may delete subdirectories to save space.
