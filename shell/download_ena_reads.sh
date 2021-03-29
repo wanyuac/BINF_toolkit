@@ -26,9 +26,9 @@ while read line; do
     readfile1="${fields[0]}_1.fastq.gz"
     readfile2="${fields[0]}_2.fastq.gz"
     echo -e "Download ${fields[1]} and save it as ${readfile1}."
-    wget -O ${readfile1} ${fields[1]}
-    sleep 5
+    wget --tries 5 --retry-connrefused --no-verbose --timeout 60 --connect-timeout 60 --waitretry 3 --output-document ${readfile1} ${fields[1]}
+    sleep 3
     echo -e "Download ${fields[2]} and save it as ${readfile2}."
-    wget -O ${readfile2} ${fields[2]}
-    sleep 5
+    wget --tries 5 --retry-connrefused --no-verbose --timeout 60 --connect-timeout 60 --waitretry 3 --output-document ${readfile2} ${fields[2]}
+    sleep 3
 done < "$1"  # expect a file name as an input
