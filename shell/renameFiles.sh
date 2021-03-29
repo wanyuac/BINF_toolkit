@@ -27,4 +27,3 @@ while read line; do
     echo -e "Change or move: ${names[0]} --> ${names[1]}."
     mv ${names[0]} ${names[1]}
 done < "$1"  # expect a file name as an input
-
