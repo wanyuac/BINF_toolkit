@@ -11,7 +11,7 @@ display_usage() {
     Input: a three-column TSV file: [isolate name]\t[FTP address of read set 1]\t[FTP address of read set 2]
     Example commands:
         cd [read directory]
-        download_ena_reads.sh readsets.tsv > download_ENA_reads.log  # Reads will be downloaded to \$PWD.
+        download_ena_reads.sh readsets.tsv 1> download_ENA_reads.log 2> download_ENA_reads.err  # Reads will be downloaded to \$PWD.
     "
 }
 
