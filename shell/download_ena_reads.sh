@@ -27,8 +27,8 @@ while read line; do
     readfile2="${fields[0]}_2.fastq.gz"
     echo -e "Download ${fields[1]} and save it as ${readfile1}."
     wget -O ${readfile1} ${fields[1]}
-    sleep 1
+    sleep 5
     echo -e "Download ${fields[2]} and save it as ${readfile2}."
     wget -O ${readfile2} ${fields[2]}
-    sleep 1
+    sleep 5
 done < "$1"  # expect a file name as an input
