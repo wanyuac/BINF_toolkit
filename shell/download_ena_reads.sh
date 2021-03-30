@@ -7,7 +7,7 @@
 # Guidance #########################
 display_usage() {
     echo "
-    Download read files from the ENA via FTP.
+    Download read files from the ENA via FTP (method: wget).
     Input: a three-column TSV file: [isolate name]\t[FTP address of read set 1]\t[FTP address of read set 2]
     Example commands:
         cd [read directory]
@@ -26,9 +26,9 @@ while read line; do
     readfile1="${fields[0]}_1.fastq.gz"
     readfile2="${fields[0]}_2.fastq.gz"
     echo -e "Download ${fields[1]} and save it as ${readfile1}."
-    wget --tries 5 --retry-connrefused --no-verbose --timeout 60 --connect-timeout 60 --waitretry 3 --output-document ${readfile1} ${fields[1]}
-    sleep 3
+    wget --tries 10 --retry-connrefused --no-verbose --timeout 60 --wait 2 --no-glob --output-document ${readfile1} ${fields[1]}
+    sleep 4
     echo -e "Download ${fields[2]} and save it as ${readfile2}."
-    wget --tries 5 --retry-connrefused --no-verbose --timeout 60 --connect-timeout 60 --waitretry 3 --output-document ${readfile2} ${fields[2]}
-    sleep 3
+    wget --tries 10 --retry-connrefused --no-verbose --timeout 60 --wait 2 --no-glob --output-document ${readfile2} ${fields[2]}
+    sleep 4
 done < "$1"  # expect a file name as an input
