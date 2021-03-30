@@ -2,12 +2,12 @@
 
 # Copyright (C) 2021 Yu Wan <wanyu@microbialsystems.cn>
 # Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
-# Publication: 29/3/2021
+# Publication: 29/3/2021; latest update: 30/3/2021
 
 # Guidance #########################
 display_usage() {
     echo "
-    Download read files from the ENA via FTP (method: wget).
+    Download read files from the ENA via FTP (method: wget), skipping downloaded files in the local folder.
     Input: a three-column TSV file: [isolate name]\t[FTP address of read set 1]\t[FTP address of read set 2]
     Example commands:
         cd [read directory]
@@ -26,9 +26,9 @@ while read line; do
     readfile1="${fields[0]}_1.fastq.gz"
     readfile2="${fields[0]}_2.fastq.gz"
     echo -e "Download ${fields[1]} and save it as ${readfile1}."
-    wget --tries 10 --retry-connrefused --no-verbose --timeout 60 --wait 2 --no-glob --output-document ${readfile1} ${fields[1]}
+    wget --tries 10 --retry-connrefused --no-verbose --timeout 60 --wait 2 --no-glob --no-clobber --output-document ${readfile1} ${fields[1]}
     sleep 4
     echo -e "Download ${fields[2]} and save it as ${readfile2}."
-    wget --tries 10 --retry-connrefused --no-verbose --timeout 60 --wait 2 --no-glob --output-document ${readfile2} ${fields[2]}
+    wget --tries 10 --retry-connrefused --no-verbose --timeout 60 --wait 2 --no-glob --no-clobber --output-document ${readfile2} ${fields[2]}
     sleep 4
 done < "$1"  # expect a file name as an input
