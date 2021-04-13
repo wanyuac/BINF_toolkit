@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 # We BLAST a nucleotide sequence against itself to identify repetitive regions. Of course, every region
 # matches to itself as well. This script is hence developed to remove such self-matches. It assumes
 # the input crunch file follows default columns in the '-fmt 6' output format of BLAST:
