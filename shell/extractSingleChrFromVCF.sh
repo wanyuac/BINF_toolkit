@@ -19,8 +19,17 @@ fi
 vcf_in=$1
 vcf_out=$2
 chr=$3
+outdir=$(dirname $vcf_out)
+tmpfile=$outdir/tmp.vcf
 
 n=$(grep -n "##contig=<ID=$chr" $vcf_in | awk -F: '{print $1}')  # https://stackoverflow.com/questions/3213748/get-line-number-while-using-grep
 head -n $n $vcf_in > $vcf_out
-grep '#CHROM' $vcf_in >> $vcf_out
-grep "$chr" $vcf_in >> $vcf_out
+
+# The following two lines avoid printing a duplicated "##contig=<ID=$chr ..." line.
+((n++))
+tail -n +$n $vcf_in > $tmpfile
+
+grep '#CHROM' $tmpfile >> $vcf_out
+grep "$chr" $tmpfile >> $vcf_out
+
+rm -f $tmpfile
