@@ -29,5 +29,4 @@ for line in input_fasta:
     else:
         seq += line  # concatenate lines of the current sequence
 
-# Write the length of the last sequence
-print("\t".join([seqid, str(len(seq))]))
+print("\t".join([seqid, str(len(seq))]))  # Write the length of the last sequence
