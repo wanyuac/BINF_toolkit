@@ -2,7 +2,7 @@
 # Creating symbolic links according to a table of two columns: original file path and link path, separated by tab characters.
 # Copyright (C) 2017-2021 Yu Wan <wanyu@microbialsystems.cn>
 # Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
-# First edition: 18 Oct 2017, the latest update: 29 Mar 2021
+# First edition: 18 Oct 2017, the latest update: 26 July 2021
 # Update note: changed the input file format from CSV to TSV for convenience of users.
 
 # Display help information ###############
@@ -30,6 +30,9 @@ fi
 
 # Otherwise, make symbolic links following the input file ###############
 while read line; do
-    IFS=$'\t' read -ra paths <<< "$line"  # split the delimited string into an arrary of two elements
-    ln -s ${paths[0]} ${paths[1]}
+    if [ ! -z "$line" ]  # Sometimes empty lines are present in the input TSV file, causing an error of ln if keep them untreated.
+    then
+        IFS=$'\t' read -ra paths <<< "$line"  # split the delimited string into an arrary of two elements
+        ln -s ${paths[0]} ${paths[1]}
+    fi
 done < "$1"  # expect a file name as an input
