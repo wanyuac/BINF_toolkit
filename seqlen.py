@@ -32,6 +32,8 @@ for line in input_fasta:
             seq = ""
         if ignore_annot:
             seqid = line.split(" ")[0]  # Get the sequence ID and ignore the sequence annotation
+        else:
+            seqid = line
         seqid = seqid[1 : ]  # Drop the ">" character
         allow_write = True
     else:
