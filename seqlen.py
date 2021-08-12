@@ -5,6 +5,9 @@ Calculate sequence lengths in a multiFASTA file.
 This script was inspired by Lesley Sitter's code published on biostars (www.biostars.org/p/148815/).
 
 Command: python seqlen.py [input FASTA file] [any character] > [output TSV file]
+Examples:
+    python seqlen.py input.fna 1 > seq_lengths.tsv  # With sequence annotation in the sequence description
+    python seqlen.py input.fna > seq_lengths.tsv  # Only keep the sequence ID in the sequence description
 
 Any character: a flag to keep sequence annotation in the output.
 
