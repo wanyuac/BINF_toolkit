@@ -11,8 +11,8 @@ display_usage() {
     Guppy's output sequence files.
     Usage:
         bash catGzippedFASTQs.sh [input parental directory] [output directory] [inputs.tsv]
-    For example: ./catGzippedFASTQs.sh barcodes.tsv ~/fastq/pass ~/fastq/concat
-    Input TSV file inputs.tsv consists of two columns: subdirectory name, isolate name (for the output file)
+    For example: ./catGzippedFASTQs.sh barcodes.tsv ~/fastq/pass ~/fastq/concat > cat_fastqs.log
+    Input TSV file inputs.tsv consists of two columns: subdirectory name, isolate name (for the output file).
     "
 }
 
