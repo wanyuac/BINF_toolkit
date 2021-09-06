@@ -1,8 +1,8 @@
 #!/bin/bash
 # Creating symbolic links according to a table of two columns: original file path and link path, separated by tab characters.
-# Copyright (C) 2017-2021 Yu Wan <wanyu@microbialsystems.cn>
+# Copyright (C) 2017-2021 Yu Wan <wanyuac@126.com>
 # Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
-# First edition: 18 Oct 2017, the latest update: 4 Aug 2021
+# First edition: 18 Oct 2017, the latest update: 6 Sep 2021
 # Update note: changed the input file format from CSV to TSV for convenience of users.
 
 # Display help information ###############
@@ -11,7 +11,7 @@ display_usage(){
     Usage:
            chmod a+x linkFiles.sh  # before the first run
            ./linkFiles.sh [input TSV file]
-           cat [input TSV file] | ./linkFiles.sh
+           ./linkFiles.sh [input TSV file] 1  # Add the second argument '1' to renew existing links.
     The TSV file should not contain a header line. The first column consists of original file paths, and
     the second column consists of link paths:
 	    [old name & path]\t[new name & path]\n
@@ -23,9 +23,21 @@ display_usage(){
     "
 }
 
-if [ -z $1 ]; then
+if [ -z $1 ]
+then
     display_usage
     exit
+fi
+
+# Set the override mode ###############
+if [ -z $2 ]
+then
+    override=false
+elif [ "$2" -eq "1" ]
+then
+    override=true
+else
+    override=false
 fi
 
 # Otherwise, make symbolic links following the input file ###############
@@ -34,9 +46,15 @@ while read line; do
     then
         IFS=$'\t' read -ra paths <<< "$line"  # split the delimited string into an arrary of two elements
         target="${paths[1]}"
+        origin="${paths[0]}"
         if [ ! -L "$target" ]
         then
-            ln -s ${paths[0]} $target
+            ln -s $origin $target
+        elif [ "$override" = true ]
+        then
+            echo "Warning: redirecting existing link $target -> $(readlink ${target}) to ${origin}."
+            unlink $target
+            ln -s $origin $target
         else
             echo "Warning: skipped existing link $target"
         fi
