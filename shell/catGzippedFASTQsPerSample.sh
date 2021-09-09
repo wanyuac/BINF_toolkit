@@ -2,7 +2,7 @@
 
 # Copyright (C) 2021 Yu Wan <wanyuac@126.com>
 # Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
-# First edition: 8 Sep 2021; the latest update: 8 Sep 2021
+# First edition: 8 Sep 2021; the latest update: 9 Sep 2021
 # This script is derived from catGzippedFASTQsPerDirectory.sh.
 
 # User guide ####################
@@ -59,11 +59,11 @@ do
             echo "Process read files of isolate $i"
             echo "    Concatenating $ra1 and $rb1"
             zcat $ra1 $rb1 | gzip > $outdir/${i}_1.fastq.gz  # Slower than 'cat *.fastq.gz' but generates a smaller file.
-            echo "    Concatenating $ra2 and $rb2"
+            echo -e "    Concatenating $ra2 and ${rb2}\n"
             zcat $ra2 $rb2 | gzip > $outdir/${i}_2.fastq.gz
             (( n++ ))
         else
-            echo "Skip file concatenation for sample $i due to absence of one or more read files." >&2
+            echo -e "Skip file concatenation for sample $i due to absence of one or more read files.\n" >&2
         fi
     fi
 done < "$3"  # Read sample names one-by-one from the input list
