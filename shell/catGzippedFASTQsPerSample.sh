@@ -11,7 +11,7 @@ display_usage() {
     Concatenate *.fastq.gz of each sample into a single fastq.gz file.
     Usage:
         bash catGzippedFASTQsPerSample.sh [input parental directory] [output directory] [a list of input sample names]
-    For example: ./catGzippedFASTQsPerSample.sh ~/fastq/pass isolates.txt ~/fastq/concat &> cat_fastqs.log
+    For example: ./catGzippedFASTQsPerSample.sh ~/fastq/pass ~/fastq/concat isolates.txt &> cat_fastqs.log
     There is one sample name per line in the input sample-name list.
     "
 }
