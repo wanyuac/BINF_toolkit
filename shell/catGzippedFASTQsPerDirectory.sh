@@ -2,17 +2,17 @@
 
 # Copyright (C) 2021 Yu Wan <wanyuac@126.com>
 # Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
-# First edition: 25 Aug 2021; the latest update: 7 Sep 2021
+# First edition: 25 Aug 2021; the latest update: 5 Nov 2021
 
 # User guide ####################
 display_usage() {
     echo "
-    Concatenate *.fastq.gz in each subdirectory into a single fastq.gz file. Useful for concatenating
-    Guppy's output sequence files.
+    Concatenates *.fastq.gz in each subdirectory into a single fastq.gz file. Useful for concatenating
+    Guppy's demultiplexed (with options '--barcode_kits' and '--trim_barcodes' enabled) output sequence files.
     Usage:
         bash catGzippedFASTQsPerDirectory.sh [input parental directory] [output directory] [inputs.tsv]
-    For example: ./catGzippedFASTQsPerDirectory.sh barcodes.tsv ~/fastq/pass ~/fastq/concat > cat_fastqs.log
-    Input TSV file inputs.tsv consists of two columns: subdirectory name, isolate name (for the output file).
+    For example: ./catGzippedFASTQsPerDirectory.sh ~/fastq/pass ~/fastq/concat barcodes.tsv > cat_fastqs.log
+    Input TSV file inputs.tsv consists of two columns: [subdirectory name]\t[output filename without '.fastq.gz' or so].
     "
 }
 
