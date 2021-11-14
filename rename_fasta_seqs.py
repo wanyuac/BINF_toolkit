@@ -7,7 +7,7 @@ when specified.
 Author: Yu Wan (wanyuac@gmail.com, https://github.com/wanyuac)
 Python version 2 and 3 compatible
 License: GNU GPL 2.1
-First edition: 11 Nov 2018, the latest revision: 13 Nov 2018.
+First edition: 11 Nov 2018, the latest revision: 14 Nov 2021.
 Created and finished in Nara, Japan.
 """
 
@@ -25,6 +25,7 @@ def parse_arguments():
     parser.add_argument("--mapping", "-m", dest = "mapping", type = str, required = True, help = "A tab-delimited file mapping original sequence IDs to new IDs.")
     parser.add_argument("--out", "-o", dest = "out", type = str, required = False, default = "./renamed.fasta", help = "Name and path for output FASTA file.")
     parser.add_argument("--keep_all", "-k", dest = "keep_all", action = "store_true", required = False, help = "Set to keep all sequences when some IDs are not found in the rename table.")
+    parser.add_argument("--simple", "-s", dest = "simple", action = "store_true", required = False, help = "Drop original sequence names to make simple headers.")
 
     return parser.parse_args()
 
@@ -32,12 +33,15 @@ def parse_arguments():
 def main():
     args = parse_arguments()
     mapping = import_mapping_table(args.mapping)
+    drop_prev_name = args.simple
     to_rename = list(mapping.keys())
-    in_fasta = open(args.fasta, "rU")
+    in_fasta = open(args.fasta, "r")
     out = open(args.out, "w")
     
     for seq in SeqIO.parse(in_fasta, "fasta"):  # read the input FASTA file from stdin
         if seq.id in to_rename:
+            if drop_prev_name:
+                seq.description = ""
             seq.id = mapping[seq.id]
             print(seq.format("fasta"), file = out)
         elif args.keep_all:
@@ -51,7 +55,7 @@ def main():
 
 def import_mapping_table(rename):
     # Read the tab-delimited table for renaming sequences.
-    with open(rename, "rU") as f:
+    with open(rename, "r") as f:
         lines = f.read().splitlines()
         
     r = {}
