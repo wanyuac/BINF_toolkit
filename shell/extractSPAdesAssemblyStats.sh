@@ -10,7 +10,7 @@ display_usage() {
     Command line:
       extractSPAdesAssemblyStats.sh [input.fasta] > [isolate1.tsv]  # Single-assembly mode: print a header line
       extractSPAdesAssemblyStats.sh [input.fasta] [isolate name] > [isolate name.tsv]  # Multi-assembly mode: do not print a header line and append
-      the isolate name in each line for the convenience of concatenating files"
+      the isolate name in each line for the convenience of concatenating files. This mode is used in a loop that runs this script iteratively."
 }
 
 if [ -z $1 ]; then
@@ -21,7 +21,7 @@ fi
 if [ -z "$2" ]; then  # Single-assembly mode
     echo -e 'Node\tLength\tDepth'  # Print the header line. Note that the echo command automatically appends a newline character to the output string.
     grep '>' $1 | sed -e 's/>//g' | sed -e 's/_length_/\t/g' | sed -e 's/_cov_/\t/g'
-else  # Multi-assembly mode
+else  # Multi-assembly mode (namely, to loop through multiple FASTA files, where each iteration calls this script)
     IFS=$'\n'  # https://stackoverflow.com/questions/8768420/how-to-convert-command-output-to-an-array-line-by-line-in-bash
     lines=( $(grep '>' $1 | sed -e 's/>//g' | sed -e 's/_length_/\t/g' | sed -e 's/_cov_/\t/g') )
     for i in ${lines[@]}; do
