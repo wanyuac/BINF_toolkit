@@ -9,8 +9,10 @@ display_usage() {
     Extract contig/scaffold names, lengths, and depths from a SPAdes output FASTA file and save them in a tab-delimited text file.
     Command line:
       extractSPAdesAssemblyStats.sh [input.fasta] > [isolate1.tsv]  # Single-assembly mode: print a header line
-      extractSPAdesAssemblyStats.sh [input.fasta] [isolate name] > [isolate name.tsv]  # Multi-assembly mode: do not print a header line and append
-      the isolate name in each line for the convenience of concatenating files. This mode is used in a loop that runs this script iteratively."
+      extractSPAdesAssemblyStats.sh [input.fasta] [isolate name] >> [fasta summary.tsv]  # Multi-assembly mode: do not print a header line and append
+      the isolate name in each line for the convenience of concatenating files. This mode is used in a loop that runs this script iteratively.
+      For the multi-assembly mode, users may run \`echo -e \"Isolate\tNode\tLength\tDepth\" > asm_stats.tsv\` before the loop. 
+      "
 }
 
 if [ -z $1 ]; then
