@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """
-Creating symbolic links according to a table of three columns: sample names, R1 read files and R2 read files, separated by tab characters.
+Creating symbolic links according to a table of five columns: sample name, input read directory, R1 read file, R2 read file, action (Copy or Link),
+separated by tab characters.
 Warning: existing symbolic links and files will be replaced by new links or files if --update/-u is flagged.
 Dependencies: Python 3, bash environment
 
