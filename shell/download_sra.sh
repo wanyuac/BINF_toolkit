@@ -98,16 +98,27 @@ if [ "$read_file" = true ]; then
             genome="${line_fields[1]}"
             if [ "$paired_end" = true ]; then  # Paired-end reads
                 echo "Downloading $accession and rename files as ${genome}_1.fastg.gz and ${genome}_2.fastq.gz."
-                fastq-dump --outdir "$out_dir" --split-3 "$accession"  # Download and split the read file, and create the output directory if necessary
-                gzip "${out_dir}/${accession}_1.fastq"
-                gzip "${out_dir}/${accession}_2.fastq"
-                mv "${out_dir}/${accession}_1.fastq.gz" "${out_dir}/${genome}_1.fastq.gz"
-                mv "${out_dir}/${accession}_2.fastq.gz" "${out_dir}/${genome}_2.fastq.gz"
+                fastq-dump --readids --outdir "$out_dir" --split-3 "$accession"  # Download and split the read file, and create the output directory if necessary
+                f1="${out_dir}/${accession}_1.fastq"
+                f2="${out_dir}/${accession}_2.fastq"
+                if [ -f "$f1" ] && [ -f "$f2" ]; then
+                    gzip "$f1"
+                    gzip "$f2"
+                    mv "${f1}.gz" "${out_dir}/${genome}_1.fastq.gz"
+                    mv "${f2}.gz" "${out_dir}/${genome}_2.fastq.gz"
+                else
+                    echo "Error: $f1 and/or $f2 could not be downloaded." >&2
+                fi
             else  # Single-end reads
                 echo "Download ${accession} and rename it as ${genome}.fastq.gz."
-                fastq-dump --outdir "$out_dir" --split-3 "$accession"
-                gzip "${out_dir}/${accession}.fastq"
-                mv "${out_dir}/${accession}.fastq.gz" "${out_dir}/${genome}.fastq.gz"
+                fastq-dump --readids --outdir "$out_dir" --split-3 "$accession"
+                f1="${out_dir}/${accession}.fastq"
+                if [ -f "$f1" ]; then
+                    gzip "$f1"
+                    mv "${f1}.gz" "${out_dir}/${genome}.fastq.gz"
+                else
+                    echo "Error: $f1 could not be downloaded." >&2
+                fi
             fi
             echo -e "Finished processing ${accession}.\n"
             sleep 2  # Pause, to avoid too many connection requests to NCBI's server.
@@ -116,12 +127,23 @@ if [ "$read_file" = true ]; then
         echo -e "Use accession numbers as filenames of downloaded read sets.\n"
         for accession in "${lines_array[@]}"; do
             echo "Downloading read set ${accession}."
-            fastq-dump --outdir ${out_dir} --split-3 ${accession}
+            fastq-dump --readids --outdir ${out_dir} --split-3 ${accession}
             if [ "${paired_end}" = true ]; then
-                gzip "${out_dir}/${accession}_1.fastq"
-                gzip "${out_dir}/${accession}_2.fastq"
+                f1="${out_dir}/${accession}_1.fastq"
+                f2="${out_dir}/${accession}_2.fastq"
+                if [ -f "$f1" ] && [ -f "$f2" ]; then
+                    gzip "${out_dir}/${accession}_1.fastq"
+                    gzip "${out_dir}/${accession}_2.fastq"
+                else
+                    echo "Error: $f1 and/or $f2 could not be downloaded." >&2
+                fi
             else
-                gzip "${out_dir}/${accession}.fastq"
+                f1="${out_dir}/${accession}.fastq"
+                if [ -f "$f1" ]; then
+                    gzip "${out_dir}/${accession}.fastq"
+                else
+                    echo "Error: $f1 could not be downloaded." >&2
+                fi
             fi
             echo -e "Finished processing ${accession}.\n"
             sleep 2
@@ -131,12 +153,23 @@ else  # When accession numbers come from the -a parameter
     echo -e "Reading accession numbers from the parameter '-a'.\n"
     for i in "${accessions[@]}"; do  # Filename replacement is not supported under this mode.
         echo "Downloading and parsing ${i}."
-        fastq-dump --outdir ${out_dir} --split-3 $i
+        fastq-dump --readids --outdir ${out_dir} --split-3 $i
         if [ "${paired_end}" = true ]; then
-            gzip "${out_dir}/${accession}_1.fastq"
-            gzip "${out_dir}/${accession}_2.fastq"
+            f1="${out_dir}/${accession}_1.fastq"
+            f2="${out_dir}/${accession}_2.fastq"
+            if [ -f "$f1" ] && [ -f "$f2" ]; then
+                gzip "$f1"
+                gzip "$f2"
+            else
+                echo "Error: $f1 and/or $f2 could not be downloaded." >&2
+            fi
         else
-            gzip "${out_dir}/${accession}.fastq"
+            f1="${out_dir}/${accession}.fastq"
+            if [ -f "$f1" ]; then
+                gzip "${out_dir}/${accession}.fastq"
+            else
+                echo "Error: $f1 could not be downloaded." >&2
+            fi
         fi
         echo -e "Finished processing ${i}.\n"
         sleep 2
