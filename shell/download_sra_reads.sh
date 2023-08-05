@@ -1,17 +1,14 @@
 #!/bin/bash
 # Copyright (C) 2020-2023 Yu Wan <wanyuac@126.com>
 # Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
-# Publication: 11 March 2020
-# Last modification: 1 August 2023
+# Publication: 11 March 2020; last modification: 5 August 2023
 
 # Help information #########################
 show_help() {
     echo "
     Download files of paired-end short reads from the NCBI SRA database.
     Arguments:
-        -m: (optional) Name of an sra-toolkit module, which contains the program fastq-dump.
-            Please use command 'export PATH=[directory of fastq-dump]:$PATH' to ensure fastq-dump is accessible if
-            this option (-m) is not configured.
+        -d: (optional) Directory that contains the program fastq-dump.
         -o: Output directory (no forward slash).
         -a: A comma-delimited string of target accession numbers (SRR*)
         -f: A single-column text file of SRR numbers or a two-column tab-delimited file of SRR numbers (1st column)
@@ -36,7 +33,6 @@ if [ -z "$1" ] || [ $1 = "-h" ]; then
 fi
 
 # Main function #########################
-env_module=''  # Name of sra-toolkit
 out_dir='.'  # Output directory
 replace_names=false  # By default, do not replace accession numbers with genome names.
 paired_end=true  # Assumes all read files are paired-end.
@@ -59,8 +55,8 @@ for i in "$@"; do
         -s)
         paired_end=false  # Single-end reads
         ;;
-        -m=*)
-        env_module="${i#*=}"
+        -d=*)
+        program_dir="${i#*=}"
         ;;
         -o=*)
         out_dir="${i#*=}"
@@ -77,9 +73,8 @@ if [ ! -d "$out_dir" ]; then
 fi
 
 # Load module
-if [ ! -z "$env_module" ]; then
-    echo "Loading environment module ${env_module}."
-    module load "$env_module"
+if [ ! -z "$program_dir" ]; then
+    export PATH="${program_dir}:$PATH"
 fi
 
 # Download and parse read files
