@@ -1,7 +1,7 @@
 #!/bin/bash
 # Copyright (C) 2020-2023 Yu Wan <wanyuac@126.com>
 # Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
-# Publication: 11 March 2020; last modification: 5 August 2023
+# Publication: 11 March 2020; last modification: 8 August 2023
 
 # Help information #########################
 show_help() {
@@ -11,8 +11,8 @@ show_help() {
         -d: (optional) Directory that contains the program fastq-dump.
         -o: Output directory (no forward slash).
         -a: A comma-delimited string of target accession numbers (SRR*)
-        -f: A single-column text file of SRR numbers or a two-column tab-delimited file of SRR numbers (1st column)
-            and genome names (2nd column).
+        -f: A single-column text file of SRR numbers or a two-column tab-delimited file of genome names (1st column)
+            and SRR numbers (2nd column).
         -r: A logical flag turning on replacement of SRR numbers with genome names for read files.
         -s: A logical flag notifying this script that the reads to be downloaded are single-end.
     Example command:
@@ -89,8 +89,8 @@ if [ "$read_file" = true ]; then
         echo -e "Genome names will substitute for accession numbers of read sets.\n"
         for line in "${lines_array[@]}"; do
             IFS=$'\t' read -r -a line_fields <<< "${line}"
-            accession="${line_fields[0]}"
-            genome="${line_fields[1]}"
+            genome="${line_fields[0]}"
+            accession="${line_fields[1]}"
             if [ "$paired_end" = true ]; then  # Paired-end reads
                 echo "Downloading $accession and rename files as ${genome}_1.fastg.gz and ${genome}_2.fastq.gz."
                 fastq-dump --readids --outdir "$out_dir" --split-3 "$accession"  # Download and split the read file, and create the output directory if necessary
