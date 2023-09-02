@@ -16,7 +16,7 @@ show_help() {
         -r: A logical flag turning on replacement of SRR numbers with genome names for read files.
         -s: A logical flag notifying this script that the reads to be downloaded are single-end.
     Example command:
-        ./download_sra_reads.sh -d=~/bin/sra_toolkit/bin -o=. -f=readsets.tsv -r
+        ./download_sra_reads.sh -d=\"\$HOME/bin/sra_toolkit/bin\" -o=\"\$PWD\" -f=readsets.tsv -r
     Note that:
         1. The -a argument is ignored when the -f argument is set.
         2. Newline characters in the input file must be '\n' rather than '\r\n'.
