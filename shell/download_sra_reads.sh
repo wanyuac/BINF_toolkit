@@ -77,6 +77,8 @@ if [ ! -z "$program_dir" ]; then
 fi
 
 # Download and parse read files
+error_count=0
+successes=0
 if [ "$read_file" = true ]; then
     echo "Reading accession numbers from file $acc_list."
     
@@ -100,8 +102,10 @@ if [ "$read_file" = true ]; then
                     gzip "$f2"
                     mv "${f1}.gz" "${out_dir}/${genome}_1.fastq.gz"
                     mv "${f2}.gz" "${out_dir}/${genome}_2.fastq.gz"
+                    let successes++
                 else
                     echo "Error: $f1 and/or $f2 could not be downloaded." >&2
+                    let error_count++
                 fi
             else  # Single-end reads
                 echo "Download ${accession} and rename it as ${genome}.fastq.gz."
@@ -110,8 +114,10 @@ if [ "$read_file" = true ]; then
                 if [ -f "$f1" ]; then
                     gzip "$f1"
                     mv "${f1}.gz" "${out_dir}/${genome}.fastq.gz"
+                    let successes++
                 else
                     echo "Error: $f1 could not be downloaded." >&2
+                    let error_count++
                 fi
             fi
             echo -e "Finished processing ${accession}.\n"
@@ -128,15 +134,19 @@ if [ "$read_file" = true ]; then
                 if [ -f "$f1" ] && [ -f "$f2" ]; then
                     gzip "${out_dir}/${accession}_1.fastq"
                     gzip "${out_dir}/${accession}_2.fastq"
+                    let successes++
                 else
                     echo "Error: $f1 and/or $f2 could not be downloaded." >&2
+                    let error_count++
                 fi
             else
                 f1="${out_dir}/${accession}.fastq"
                 if [ -f "$f1" ]; then
                     gzip "${out_dir}/${accession}.fastq"
+                    let successes++
                 else
                     echo "Error: $f1 could not be downloaded." >&2
+                    let error_count++
                 fi
             fi
             echo -e "Finished processing ${accession}.\n"
@@ -170,4 +180,4 @@ else  # When accession numbers come from the -a parameter
     done
 fi
 
-echo 'All download tasks have been finished successfully.'
+echo 'Finished all download tasks. Downloaded $successes readsets and failed to download $error_count readsets'
