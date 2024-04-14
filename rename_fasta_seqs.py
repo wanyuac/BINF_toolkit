@@ -38,7 +38,7 @@ def main():
     in_fasta = open(args.fasta, "r")
     out = open(args.out, "w")
     
-    for seq in SeqIO.parse(in_fasta, "fasta"):  # read the input FASTA file from stdin
+    for seq in SeqIO.parse(in_fasta, "fasta"):  # read the input FASTA file
         if seq.id in to_rename:
             if drop_prev_name:
                 seq.description = ""
