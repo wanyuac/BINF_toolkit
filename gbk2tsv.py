@@ -10,16 +10,17 @@ python gbk2tsv.py --gbk 1.gbk 2.gbk 3.gbk --outdir . --features "CDS,rRNA,tRNA" 
 python gbk2tsv.py --gbk $(ls *.gbk) --outdir . --features "CDS,rRNA,tRNA" --nucl_seq --prot_seq
 
 An example showing columns in every output file:
-Contig    Locus         Feature    Start    End    Strand    Pseudo    Product             Nucl_seq    Prot_seq
-Contig_1     locus_tag_1   CDS        1        2200   +      N         dehydrogenase I     ...         ...
-Contig_1     locus_tag_2   CDS        2230     3100   -      Y         homoserine kinase   ...         ...
+Contig    Locus         Feature    Start    End    Strand    Pseudo    Product             Gene     Nucl_seq    Prot_seq
+Contig_1     locus_tag_1   CDS        1        2200   +      N         dehydrogenase I     unknown  ...         ...
+Contig_1     locus_tag_2   CDS        2230     3100   -      Y         homoserine kinase   unknown  ...         ...
 ...
 
 Dependency: BioPython
 Python versions 2 and 3 compatible
 Copyright 2019 Yu Wan (wanyuac@sina.cn)
 Licensed under the Apache License, Version 2.0
-First and the latest edition: 13 Sep 2019 (Happy Mid-Autumn Festival)
+First version: 13 Sep 2019 (Happy Mid-Autumn Festival)
+Latest update: 3 Oct 2025
 """
 
 
@@ -52,7 +53,7 @@ def main():
     if (len(gbk_list) == 0):
         sys.exit("Invalid --gbk argument: no GenBank file is found.")
         
-    header = ["Contig", "Locus", "Feature", "Start", "End", "Strand", "Pseudo", "Product"]
+    header = ["Contig", "Locus", "Feature", "Start", "End", "Strand", "Pseudo", "Product", "Gene"]
     if args.nucl_seq:
         header += ["Nucl_seq"]
     if args.prot_seq:
@@ -79,7 +80,7 @@ def main():
                         locus_tag = "unnamed"
                     
                     # Determine which DNA strand the current feature is located in
-                    if f.strand == 1:
+                    if f.location.strand == 1:
                         strand = "+"
                     else:
                         strand = "-"
@@ -95,9 +96,14 @@ def main():
                         product = f.qualifiers["product"][0]
                     else:
                         product = "unknown"
+                    
+                    if "gene" in f.qualifiers:
+                        gene = f.qualifiers["gene"][0]
+                    else:
+                        gene = "unknown"
                             
                     # Construct the line to be written into the output file                 
-                    line = [contig, locus_tag, f.type, str(f.location.nofuzzy_start + 1), str(f.location.nofuzzy_end), strand, is_pesudo, product]
+                    line = [contig, locus_tag, f.type, str(f.location.start + 1), str(f.location.end), strand, is_pesudo, product, gene]
                     if args.nucl_seq:
                         line += [str(f.extract(r.seq))]
                     if feature_type == "CDS" and args.prot_seq:
