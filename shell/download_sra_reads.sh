@@ -30,7 +30,7 @@ show_help() {
     "
 }
 
-if [ -z "$1" ] || [ $1 = "-h" ]; then
+if [ -z "$1" ] || [ "$1" = "-h" ]; then
     show_help
     exit
 fi
