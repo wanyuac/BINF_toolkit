@@ -15,12 +15,13 @@ show_help() {
         -d: (optional) Directory that contains the program fastq-dump.
         -o: Output directory (no forward slash).
         -a: A comma-delimited string of target accession numbers (SRR*)
-        -f: A single-column text file of SRR numbers or a two-column tab-delimited file of genome names (1st column)
+        -f: A single-column text file of SRR numbers or a two-column CSV file of genome names (1st column)
             and SRR numbers (2nd column).
         -r: A logical flag turning on replacement of SRR numbers with genome names for read files.
         -s: A logical flag notifying this script that the reads to be downloaded are single-end.
+        -u: Skip the dos2unix step if your input file is known to follow the Unix-style line ending.
     Example command:
-        ./download_sra_reads.sh -d=\"\$HOME/bin/sra_toolkit/bin\" -o=\"\$PWD\" -f=readsets.tsv -r
+        ./download_sra_reads.sh -d=\"\$HOME/bin/sra_toolkit/bin\" -o=\"\$PWD\" -f=readsets.csv -r
     Note that:
         1. The -a argument is ignored when the -f argument is set.
         2. Newline characters in the input file must be '\n' rather than '\r\n'.
@@ -48,6 +49,7 @@ out_dir='.'  # Output directory
 replace_names=false  # By default, do not replace accession numbers with genome names.
 paired_end=true  # Assumes all read files are paired-end.
 read_file=false  # Assumes that by default accessions are not provided in a file.
+unix_format=false  # Assumes the input file has non-Unix-style line endings ('\n\r' etc).
 
 # Read arguments
 for i in "$@"; do
@@ -72,6 +74,9 @@ for i in "$@"; do
         -o=*)
         out_dir="${i#*=}"
         ;;
+        -u)
+        unix_format=true
+        ;;
         *)  # Do nothing otherwise.
         ;;
     esac
@@ -92,17 +97,20 @@ fi
 error_count=0
 successes=0
 if [ "$read_file" = true ]; then
-    dos2unix "$acc_list"
+    if [ "$unix_format" = false ]; then
+        dos2unix "$acc_list"
+    fi
         
     # Read lines of the input file into an array, skipping empty lines
     # https://stackoverflow.com/questions/15685736/how-to-extract-a-particular-element-from-an-array-in-bash
     echo "Reading accession numbers from file $acc_list"
-    IFS=$'\n' read -d '' -r -a lines_array < "$acc_list"
+    mapfile -t lines_array < "$acc_list"
+    echo "Read ${#lines_array[@]} entries from file $acc_list"
     
     if [ "$replace_names" = true ]; then
         echo -e "Genome names will substitute for accession numbers of read sets.\n"
         for line in "${lines_array[@]}"; do
-            IFS=$'\t' read -r -a line_fields <<< "${line}"
+            IFS=',' read -r -a line_fields <<< "${line}"
             genome="${line_fields[0]}"
             accession="${line_fields[1]}"
             genome="$(trim_whitespace "$genome")"
