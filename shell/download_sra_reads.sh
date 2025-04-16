@@ -1,7 +1,9 @@
 #!/bin/bash
-# Copyright (C) 2020-2023 Yu Wan <wanyuac@126.com>
+# Copyright (C) 2020-2025 Yu Wan <wanyuac@gmail.com>
 # Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
-# Publication: 11 March 2020; last modification: 2 September 2023
+# Publication: 11 March 2020; last modification: 16 April 2025
+# Important update on 16/4/2025: added fastq-dump arguments "--skip-technical --clip --dumpbase --read-filter pass"
+# according to https://edwards.flinders.edu.au/fastq-dump/. (Thanks to Sophie Mannix for pointing this out)
 
 # Help information #########################
 show_help() {
@@ -94,7 +96,7 @@ if [ "$read_file" = true ]; then
             accession="${line_fields[1]}"
             if [ "$paired_end" = true ]; then  # Paired-end reads
                 echo "Downloading $accession and rename files as ${genome}_1.fastg.gz and ${genome}_2.fastq.gz."
-                fastq-dump --readids --outdir "$out_dir" --split-3 "$accession"  # Download and split the read file, and create the output directory if necessary
+                fastq-dump --readids --skip-technical --clip --dumpbase --read-filter pass --outdir "$out_dir" --split-3 "$accession"  # Download and split the read file, and create the output directory if necessary
                 f1="${out_dir}/${accession}_1.fastq"
                 f2="${out_dir}/${accession}_2.fastq"
                 if [ -f "$f1" ] && [ -f "$f2" ]; then
@@ -109,7 +111,7 @@ if [ "$read_file" = true ]; then
                 fi
             else  # Single-end reads
                 echo "Download ${accession} and rename it as ${genome}.fastq.gz."
-                fastq-dump --readids --outdir "$out_dir" --split-3 "$accession"
+                fastq-dump --readids --skip-technical --clip --dumpbase --read-filter pass --outdir "$out_dir" --split-3 "$accession"
                 f1="${out_dir}/${accession}.fastq"
                 if [ -f "$f1" ]; then
                     gzip "$f1"
@@ -127,7 +129,7 @@ if [ "$read_file" = true ]; then
         echo -e "Use accession numbers as filenames of downloaded read sets.\n"
         for accession in "${lines_array[@]}"; do
             echo "Downloading read set ${accession}."
-            fastq-dump --readids --outdir ${out_dir} --split-3 ${accession}
+            fastq-dump --readids --skip-technical --clip --dumpbase --read-filter pass --outdir ${out_dir} --split-3 ${accession}
             if [ "${paired_end}" = true ]; then
                 f1="${out_dir}/${accession}_1.fastq"
                 f2="${out_dir}/${accession}_2.fastq"
@@ -157,7 +159,7 @@ else  # When accession numbers come from the -a parameter
     echo -e "Reading accession numbers from the parameter '-a'.\n"
     for i in "${accessions[@]}"; do  # Filename replacement is not supported under this mode.
         echo "Downloading and parsing ${i}."
-        fastq-dump --readids --outdir ${out_dir} --split-3 $i
+        fastq-dump --readids --skip-technical --clip --dumpbase --read-filter pass --outdir ${out_dir} --split-3 $i
         if [ "${paired_end}" = true ]; then
             f1="${out_dir}/${accession}_1.fastq"
             f2="${out_dir}/${accession}_2.fastq"
