@@ -26,7 +26,7 @@ show_help() {
         2. Newline characters in the input file must be '\n' rather than '\r\n'.
         3. Fastq-dump sometimes fails in downloading or parsing read files. Remember to check the STDOUT output
            of download_sra.sh after each run.
-        4. Dependency: SRA Toolkit v3.0.6 and later versions
+        4. Dependency: SRA Toolkit v3.0.6 and later versions, dos2unix
     "
 }
 
@@ -92,10 +92,12 @@ fi
 error_count=0
 successes=0
 if [ "$read_file" = true ]; then
-    echo "Reading accession numbers from file $acc_list."
-    
+    echo "Convert non-Unix newline characters to the Unix one in $acc_list"
+    dos2unix "$acc_list"
+        
     # Read lines of the input file into an array, skipping empty lines
     # https://stackoverflow.com/questions/15685736/how-to-extract-a-particular-element-from-an-array-in-bash
+    echo "Reading accession numbers from file $acc_list."
     IFS=$'\n' read -d '' -r -a lines_array < "$acc_list"
     
     if [ "$replace_names" = true ]; then
