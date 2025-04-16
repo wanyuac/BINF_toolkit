@@ -30,9 +30,12 @@ show_help() {
     "
 }
 
-if [ -z "$1" ] || [ "$1" = "-h" ]; then
+if [ -z "$1" ]; then  # When $1 does not exist (Error "$1: unbound variable" arises when use `if [ -z "$1" ] || [ "$1" = "-h" ]`)
     show_help
-    exit
+    exit 0
+elif [ "$1" = "-h" ]; then
+    show_help
+    exit 0
 fi
 
 # Remove leading and trailing whitespace (spaces, tabs, etc.) while handling carriage returns (\r) and newlines (\n) #########################
