@@ -30,7 +30,7 @@ show_help() {
     "
 }
 
-if [ -z "$1" ]; then  # When $1 does not exist (Error "$1: unbound variable" arises when use `if [ -z "$1" ] || [ "$1" = "-h" ]`)
+if [[ $# -eq 0 ]]; then  # When $1 does not exist (Error "$1: unbound variable" arises when use `if [[ $# -eq 0 ]] || [ "$1" = "-h" ]`). Do not use `-z "$1"`.
     show_help
     exit 0
 elif [ "$1" = "-h" ]; then
