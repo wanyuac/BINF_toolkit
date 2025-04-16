@@ -5,6 +5,8 @@
 # Important update on 16/4/2025: added fastq-dump arguments "--skip-technical --clip --dumpbase --read-filter pass"
 # according to https://edwards.flinders.edu.au/fastq-dump/. (Thanks to Sophie Mannix for pointing this out)
 
+set -euo pipefail  # Enforce strict error handling
+
 # Help information #########################
 show_help() {
     echo "
@@ -32,6 +34,11 @@ if [ -z "$1" ] || [ $1 = "-h" ]; then
     show_help
     exit
 fi
+
+# Remove leading and trailing whitespace (spaces, tabs, etc.) while handling carriage returns (\r) and newlines (\n) #########################
+function trim_whitespace() {
+    echo -e "$1" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
+}
 
 # Main function #########################
 out_dir='.'  # Output directory
@@ -94,6 +101,8 @@ if [ "$read_file" = true ]; then
             IFS=$'\t' read -r -a line_fields <<< "${line}"
             genome="${line_fields[0]}"
             accession="${line_fields[1]}"
+            genome="$(trim_whitespace "$genome")"
+            accession="$(trim_whitespace "$accession")"
             if [ "$paired_end" = true ]; then  # Paired-end reads
                 echo "Downloading $accession and rename files as ${genome}_1.fastg.gz and ${genome}_2.fastq.gz."
                 fastq-dump --readids --skip-technical --clip --dumpbase --read-filter pass --outdir "$out_dir" --split-3 "$accession"  # Download and split the read file, and create the output directory if necessary
@@ -128,6 +137,7 @@ if [ "$read_file" = true ]; then
     else  # A single-column input file
         echo -e "Use accession numbers as filenames of downloaded read sets.\n"
         for accession in "${lines_array[@]}"; do
+            accession="$(trim_whitespace "$accession")"
             echo "Downloading read set ${accession}."
             fastq-dump --readids --skip-technical --clip --dumpbase --read-filter pass --outdir ${out_dir} --split-3 ${accession}
             if [ "${paired_end}" = true ]; then
@@ -157,9 +167,10 @@ if [ "$read_file" = true ]; then
     fi
 else  # When accession numbers come from the -a parameter
     echo -e "Reading accession numbers from the parameter '-a'.\n"
-    for i in "${accessions[@]}"; do  # Filename replacement is not supported under this mode.
-        echo "Downloading and parsing ${i}."
-        fastq-dump --readids --skip-technical --clip --dumpbase --read-filter pass --outdir ${out_dir} --split-3 $i
+    for accession in "${accessions[@]}"; do  # Filename replacement is not supported under this mode.
+        accession="$(trim_whitespace "$accession")"
+        echo "Downloading and parsing ${accession}."
+        fastq-dump --readids --skip-technical --clip --dumpbase --read-filter pass --outdir ${out_dir} --split-3 $accession
         if [ "${paired_end}" = true ]; then
             f1="${out_dir}/${accession}_1.fastq"
             f2="${out_dir}/${accession}_2.fastq"
@@ -177,9 +188,10 @@ else  # When accession numbers come from the -a parameter
                 echo "Error: $f1 could not be downloaded." >&2
             fi
         fi
-        echo -e "Finished processing ${i}.\n"
+        echo -e "Finished processing ${accession}.\n"
         sleep 2
     done
 fi
 
-echo 'Finished all download tasks. Downloaded $successes readsets and failed to download $error_count readsets'
+echo "Finished all download tasks. Downloaded $successes readsets and failed to download $error_count readsets"
+exit 0
