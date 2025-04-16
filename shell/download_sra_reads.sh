@@ -92,12 +92,11 @@ fi
 error_count=0
 successes=0
 if [ "$read_file" = true ]; then
-    echo "Convert non-Unix newline characters to the Unix one in $acc_list"
     dos2unix "$acc_list"
         
     # Read lines of the input file into an array, skipping empty lines
     # https://stackoverflow.com/questions/15685736/how-to-extract-a-particular-element-from-an-array-in-bash
-    echo "Reading accession numbers from file $acc_list."
+    echo "Reading accession numbers from file $acc_list"
     IFS=$'\n' read -d '' -r -a lines_array < "$acc_list"
     
     if [ "$replace_names" = true ]; then
