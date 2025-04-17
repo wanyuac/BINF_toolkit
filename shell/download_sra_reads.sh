@@ -1,7 +1,7 @@
 #!/bin/bash
 # Copyright (C) 2020-2025 Yu Wan <wanyuac@gmail.com>
 # Licensed under the GNU General Public Licence version 3 (GPLv3) <https://www.gnu.org/licenses/>.
-# Publication: 11 March 2020; last modification: 16 April 2025
+# Publication: 11 March 2020; last modification: 17 April 2025
 # Important update on 16/4/2025: added fastq-dump arguments "--skip-technical --clip --dumpbase --read-filter pass"
 # according to https://edwards.flinders.edu.au/fastq-dump/. (Thanks to Sophie Mannix for pointing this out)
 
@@ -116,7 +116,7 @@ if [ "$read_file" = true ]; then
             accession="$(trim_whitespace "$accession")"
             echo "Accession: ${accession}; Genome: ${genome}"
             if [ "$paired_end" = true ]; then  # Paired-end reads
-                echo "Downloading $accession and rename files as ${genome}_1.fastg.gz and ${genome}_2.fastq.gz."
+                echo "Download $accession and rename files as ${genome}_1.fastg.gz and ${genome}_2.fastq.gz."
                 fastq-dump --readids --skip-technical --clip --dumpbase --read-filter pass --outdir "$out_dir" --split-3 "$accession"  # Download and split the read file, and create the output directory if necessary
                 f1="${out_dir}/${accession}_pass_1.fastq"
                 f2="${out_dir}/${accession}_pass_2.fastq"
