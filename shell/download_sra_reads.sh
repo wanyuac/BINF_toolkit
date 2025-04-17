@@ -5,8 +5,6 @@
 # Important update on 16/4/2025: added fastq-dump arguments "--skip-technical --clip --dumpbase --read-filter pass"
 # according to https://edwards.flinders.edu.au/fastq-dump/. (Thanks to Sophie Mannix for pointing this out)
 
-set -euo pipefail  # Enforce strict error handling
-
 # Help information #########################
 show_help() {
     echo "
@@ -108,27 +106,31 @@ if [ "$read_file" = true ]; then
     echo "Read ${#lines_array[@]} entries from file $acc_list"
     
     if [ "$replace_names" = true ]; then
-        echo -e "Genome names will substitute for accession numbers of read sets.\n"
+        echo -e "Accession numbers in file names will be replaced by genome names.\n"
         for line in "${lines_array[@]}"; do
+            echo "Parsing line '${line}'"
             IFS=',' read -r -a line_fields <<< "${line}"
             genome="${line_fields[0]}"
             accession="${line_fields[1]}"
             genome="$(trim_whitespace "$genome")"
             accession="$(trim_whitespace "$accession")"
+            echo "Accession: ${accession}; Genome: ${genome}"
             if [ "$paired_end" = true ]; then  # Paired-end reads
                 echo "Downloading $accession and rename files as ${genome}_1.fastg.gz and ${genome}_2.fastq.gz."
                 fastq-dump --readids --skip-technical --clip --dumpbase --read-filter pass --outdir "$out_dir" --split-3 "$accession"  # Download and split the read file, and create the output directory if necessary
                 f1="${out_dir}/${accession}_pass_1.fastq"
                 f2="${out_dir}/${accession}_pass_2.fastq"
                 if [ -f "$f1" ] && [ -f "$f2" ]; then
+                    echo "Compress $f1 and $f2 and rename output files"
                     gzip "$f1"
                     gzip "$f2"
                     mv "${f1}.gz" "${out_dir}/${genome}_1.fastq.gz"
                     mv "${f2}.gz" "${out_dir}/${genome}_2.fastq.gz"
-                    let successes++
+                    echo "Completed the compression and name changes for $accession"
+                    ((successes++))
                 else
                     echo "Error: $f1 and/or $f2 could not be downloaded." >&2
-                    let error_count++
+                    ((error_count++))
                 fi
             else  # Single-end reads
                 echo "Download ${accession} and rename it as ${genome}.fastq.gz."
@@ -137,10 +139,10 @@ if [ "$read_file" = true ]; then
                 if [ -f "$f1" ]; then
                     gzip "$f1"
                     mv "${f1}.gz" "${out_dir}/${genome}.fastq.gz"
-                    let successes++
+                    ((successes++))
                 else
                     echo "Error: $f1 could not be downloaded." >&2
-                    let error_count++
+                    ((error_count++))
                 fi
             fi
             echo -e "Finished processing ${accession}.\n"
@@ -158,19 +160,19 @@ if [ "$read_file" = true ]; then
                 if [ -f "$f1" ] && [ -f "$f2" ]; then
                     gzip "$f1"
                     gzip "$f2"
-                    let successes++
+                    ((successes++))
                 else
                     echo "Error: $f1 and/or $f2 could not be downloaded." >&2
-                    let error_count++
+                    ((error_count++))
                 fi
             else
                 f1="${out_dir}/${accession}_pass.fastq"
                 if [ -f "$f1" ]; then
                     gzip "$f1"
-                    let successes++
+                    ((successes++))
                 else
                     echo "Error: $f1 could not be downloaded." >&2
-                    let error_count++
+                    ((error_count++))
                 fi
             fi
             echo -e "Finished processing ${accession}.\n"
