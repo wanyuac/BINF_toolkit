@@ -11,7 +11,7 @@ show_help() {
     Download files of sequencing reads from the NCBI SRA database.
     Arguments:
         -d: (optional) Directory that contains the program fastq-dump.
-        -o: Output directory (no forward slash).
+        -o: Output directory (no forward slash). Default: ${HOME}/SRA_reads.
         -a: A comma-delimited string of target accession numbers (SRR*)
         -f: A single-column text file of SRR numbers or a two-column CSV file of genome names (1st column)
             and SRR numbers (2nd column).
@@ -53,12 +53,12 @@ function write_log() {
 }
 
 # Main function #########################
-out_dir='.'  # Output directory
+out_dir="${HOME}/SRA_reads"  # The default output directory
 replace_names=false  # By default, do not replace accession numbers with genome names.
 paired_end=true  # Assumes all read files are paired-end.
 read_file=false  # Assumes that by default accessions are not provided in a file.
 unix_format=false  # Assumes the input file has non-Unix-style line endings ('\n\r' etc).
-prefix='download_sra_reads'
+prefix=download_reads_from_sra
 suffix=$(date +"%Y-%m-%d_%H-%M-%S")  # Name suffix of log and error files
 wait_time=2  # In seconds. Time to pause before the start of a new download iteration
 
@@ -115,6 +115,7 @@ fi
 
 # Download and parse read files
 write_log "Waiting time between consecutive download iterations: $wait_time seconds."
+accession_count=0  # Assign a default value to accession_count in case neither -f nor -a is set.
 successes=0
 failures=0
 
