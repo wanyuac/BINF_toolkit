@@ -20,7 +20,7 @@ show_help() {
         -u: Skip the dos2unix step if your input file is known to follow the Unix-style line ending.
         -p: Prefix of the log file (Markdown format) in the output directory (default: download_reads_from_sra_[date (YYYY-MM-DD)]_[HH-MM-SS])
     Example command:
-        ./download_reads_from_sra.sh -d=\"\$HOME/bin/sra_toolkit/bin\" -o=\"\$PWD\" -f=readsets.csv -r -p download_reads_from_sra
+        ./download_reads_from_sra.sh -d=\"\$HOME/bin/sra_toolkit/bin\" -o=\"\$PWD\" -f=readsets.csv -r -p=download_reads_from_sra
     Note that:
         1. The -a argument is ignored when the -f argument is set.
         2. Newline characters in the input file must be '\n' rather than '\r\n'.
