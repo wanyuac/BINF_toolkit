@@ -18,15 +18,16 @@ show_help() {
         -r: A logical flag turning on replacement of SRR numbers with genome names for read files.
         -s: A logical flag notifying this script that the reads to be downloaded are single-end.
         -u: Skip the dos2unix step if your input file is known to follow the Unix-style line ending.
-        -p: Prefix of the log file (Markdown format) in the output directory (default: download_sra_reads_[date (YYYY-MM-DD)]_[HH-MM-SS])
+        -p: Prefix of the log file (Markdown format) in the output directory (default: download_reads_from_sra_[date (YYYY-MM-DD)]_[HH-MM-SS])
     Example command:
-        ./download_sra_reads.sh -d=\"\$HOME/bin/sra_toolkit/bin\" -o=\"\$PWD\" -f=readsets.csv -r -p download_sra_reads
+        ./download_reads_from_sra.sh -d=\"\$HOME/bin/sra_toolkit/bin\" -o=\"\$PWD\" -f=readsets.csv -r -p download_reads_from_sra
     Note that:
         1. The -a argument is ignored when the -f argument is set.
         2. Newline characters in the input file must be '\n' rather than '\r\n'.
         3. Fastq-dump sometimes fails in downloading or parsing read files. Remember to check the log and error files after each run.
         4. Please ensure genome names are unique throughout your dataset. Otherwise, files of the same names may be overridden at the renaming step.
-        5. Dependency: SRA Toolkit v3.0.6 and later versions, dos2unix
+        5. Dependency: SRA Toolkit v3.0.6 and later versions, dos2unix.
+        6. This script was called download_sra_reads.sh.
     "
 }
 
