@@ -10,7 +10,7 @@ show_help() {
     echo "
     Download files of sequencing reads from the NCBI SRA database.
     Arguments:
-        -d: (optional) Directory that contains the program fastq-dump.
+        -d: (optional) Directory that contains the program fastq-dump (does not need to end by a slash character '/').
         -o: Output directory (no forward slash). Default: ${HOME}/SRA_reads.
         -a: A comma-delimited string of target accession numbers (SRR*)
         -f: A single-column text file of SRR numbers or a two-column CSV file of genome names (1st column)
