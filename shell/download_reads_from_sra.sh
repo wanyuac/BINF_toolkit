@@ -99,7 +99,7 @@ for i in "$@"; do
     esac
 done
 
-log="${out_dir}/${prefix}_${suffix}.log"
+log="${out_dir}/${prefix}_${suffix}.md"  # A plain-text Markdown file
 
 # Check the output directory
 if [ ! -d "$out_dir" ]; then
@@ -311,5 +311,6 @@ else  # When accession numbers come from the -a parameter
     done
 fi
 
+write_log '# Conclusion'
 write_log "$(time_stamp) Finished all $accession_count tasks. Downloaded $successes readsets and failed to download $failures readsets."
 exit 0
